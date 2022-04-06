@@ -7,6 +7,7 @@ const app = express();
 
 const publicRouter = require('./routes/publicRoutes.js')
 const authRouter = require('./routes/authRoutes.js')
+const userRouter = require('./routes/userRoutes.js')
 
 //extension d'express
 const bodyParser = require('body-parser')
@@ -20,6 +21,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 //ajout des routes dans l'app
 app.use('/auth', authRouter)
+app.use('/user', userRouter)
 app.use('/', publicRouter)
 
 module.exports = app;
