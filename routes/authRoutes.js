@@ -4,10 +4,9 @@ const authRouter = express.Router();
 const CreateUserValidateData = require("../middlewares/validatorSignup");
 const BdHelpers = require("../middlewares/bdHelpers");
 const AuthControllers = require("../controllers/authControllers");
-const TokenHelpers = require("../middlewares/tokenHelpers");
 
 authRouter.post(
-  "/create",
+  "/register",
   CreateUserValidateData.signup,
   CreateUserValidateData.hashPassword,
   BdHelpers.ifExist({
@@ -23,6 +22,11 @@ authRouter.post(
 
 authRouter.post("/login", CreateUserValidateData.login, AuthControllers.login);
 
-authRouter.get("/info", TokenHelpers.verifyTokenId, )
+authRouter.get(
+  "/logout",
+  function (req, res, next) {
+    res.send({ success: true, message: "Déconnection" });
+  }
+);
 
 module.exports = authRouter;

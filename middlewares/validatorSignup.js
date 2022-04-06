@@ -5,15 +5,27 @@ const validator = require("validator");
 
 const CreateUserValidateData = {
   signup(req, res, next) {
-    let { email, userName, password, confirmPassword, birthDay, cgu } =
-      req.body;
+    let {
+      email,
+      userName,
+      password,
+      confirmPassword,
+      birthDay,
+      cgu,
+      role,
+      esportRole,
+      newLetter,
+    } = req.body;
     if (
       !email ||
       !userName ||
       !birthDay ||
       !password ||
       !confirmPassword ||
-      !cgu
+      !cgu ||
+      !role ||
+      !esportRole ||
+      !newLetter
     ) {
       return res.status(400).send({
         success: false,

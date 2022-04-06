@@ -4,7 +4,7 @@ const tools = require("../tools/functionHelpToken")
 
 const TokenHelpers = {
   verifyTokenId(req, res, next) {
-    req.body.decodedToken = jwt.verify(tools.extractToken(req, res), JWT_KEY);
+    req.decodedToken = jwt.verify(tools.extractToken(req, res), JWT_KEY);
     next()
   },
 };

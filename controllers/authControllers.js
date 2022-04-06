@@ -24,13 +24,13 @@ const AuthControllers = {
     });
   },
   login(req, res) {
-    const email = req.body.email 
-    const password = req.body.password 
+    const email = req.body.email;
+    const password = req.body.password;
 
     return UserModel.findOne({ email: email })
       .then((user) => {
         if (user === null) {
-          return res.status(403).send({
+          return res.status(401).send({
             success: false,
             message: "Informations de connexion incorrectes",
           });
