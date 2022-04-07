@@ -15,7 +15,7 @@ const teamSchema = mongoose.Schema(
     },
     teams: [{ 
         user: {type: mongoose.ObjectId, ref: 'user'}, 
-        role: { type: [mongoose.ObjectId], ref: 'role'},
+        roleTeam: { type: [mongoose.ObjectId], ref: 'role'},
         Permission: { type: [mongoose.ObjectId], ref: 'permission'},
     }],
     chat: [{
