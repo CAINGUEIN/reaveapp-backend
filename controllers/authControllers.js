@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const saltRounds = 10;
 const JWT_KEY = process.env.JWT_SECRET;
 
 const bcrypt = require("bcrypt");
@@ -7,11 +8,11 @@ const UserModel = require("../models/user");
 
 const AuthControllers = {
   createAccount(req, res) {
-    return UserModel.insertMany(req.body).then((newUser) => {
+    UserModel.insertMany(req.body).then((newUser) => {
       jwt.sign(
         { _id: newUser._id },
         JWT_KEY,
-        { expiresIn: "24h" },
+        { expiresIn: "60 days" },
         (err, token) => {
           if (err) console.log(err);
           res.status(200).send({
@@ -21,13 +22,14 @@ const AuthControllers = {
           });
         }
       );
-    });
+    }).catch((err) => console.log("pas cool", err))
   },
+
   login(req, res) {
     const email = req.body.email;
     const password = req.body.password;
 
-    return UserModel.findOne({ email: email })
+    return UserModel.findOne({ email: email }).select('+password')
       .then((user) => {
         if (user === null) {
           return res.status(401).send({
@@ -35,7 +37,7 @@ const AuthControllers = {
             message: "Informations de connexion incorrectes",
           });
         }
-        let passwordsDoMatch = bcrypt.compareSync(password, user.password);
+        let passwordsDoMatch = bcrypt.compareSync(password, user.password, saltRounds);
         if (!passwordsDoMatch) {
           return res.status(401).send({
             success: false,
@@ -45,7 +47,7 @@ const AuthControllers = {
           jwt.sign(
             { _id: user._id },
             JWT_KEY,
-            { expiresIn: "24h" },
+            { expiresIn: "60 days" },
             (err, token) => {
               if (err) console.log(err);
               res.status(200).send({
@@ -57,7 +59,7 @@ const AuthControllers = {
           );
         }
       })
-      .catch((err) => console.log("pas cool"));
+      .catch((err) => console.log("pas cool", err));
   },
 };
 
