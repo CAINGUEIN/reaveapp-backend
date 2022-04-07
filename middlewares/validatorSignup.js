@@ -12,20 +12,13 @@ const CreateUserValidateData = {
       confirmPassword,
       birthDay,
       cgu,
-      role,
-      esportRole,
-      newLetter,
     } = req.body;
     if (
       !email ||
       !userName ||
       !birthDay ||
       !password ||
-      !confirmPassword ||
-      !cgu ||
-      !role ||
-      !esportRole ||
-      !newLetter
+      !confirmPassword
     ) {
       return res.status(400).send({
         success: false,
