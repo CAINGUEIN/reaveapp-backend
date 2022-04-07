@@ -1,58 +1,68 @@
-const mongoose = require('mongoose')
+const { isEmail } = require("validator");
 
-const userSchema = mongoose.Schema({
+const mongoose = require("mongoose");
+
+const userSchema = mongoose.Schema(
+  {
     userName: {
-        type: String,
-        require: true,
-        minLength: 3,
-        maxLength: 30,
-        unique: true,
+      type: String,
+      require: true,
+      minLength: 3,
+      maxLength: 38,
+      unique: true,
     },
     email: {
-        type: String,
-        require: true,
-        lowercase: true,
-        unique: true,
+      type: String,
+      require: true,
+      validate: [isEmail],
+      lowercase: true,
+      unique: true,
     },
     password: {
-        type: String,
-        require: true,
+      type: String,
+      require: true,
+      select: false,
     }, //String Hasher
-    birthDay:{
-        type: String,
-        require: true,
+    birthDay: {
+      type: String,
+      require: true,
     },
-    role: {
-        type: [String]
+    newsLetter: {
+      type: Boolean,
+      require: true,
     },
-    esportRole: {
-        type: [String]
+    ecoRole: {
+      type: [mongoose.ObjectId], ref: 'ecoRole'
     },
-    profile: {
-        picture: {
-            type: String,
-            default: "",
-        },
-        bio: {
-            type: String,
-            maxLength: 1024,
-        },
-        followers: {
-            type: [String]
-        },
-        following: {
-            type: [String]
-        },
-        likes: {
-            type: [String]
-        },
+    gameRole: {
+      type: [mongoose.ObjectId], ref: 'gameRole'
     },
-},
-{
+    friends: {
+      type: [mongoose.ObjectId], ref: 'user'
+    },
+    teams: {
+      type: [mongoose.ObjectId], ref: 'team'
+    },
+    picture: {
+      type: String,
+      default: "",
+    },
+    bio: {
+      type: String,
+      maxLength: 158,
+    },
+    followers: {
+      type: [mongoose.ObjectId], ref: 'user'
+    },
+    following: {
+      type: [mongoose.ObjectId], ref: 'user'
+    },
+  },
+  {
     timestamps: true,
-}
-)
+  }
+);
 
-const UserModel = mongoose.model('user', userSchema)
+const UserModel = mongoose.model("user", userSchema);
 
-module.exports = UserModel
+module.exports = UserModel;
