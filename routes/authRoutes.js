@@ -22,11 +22,8 @@ authRouter.post(
 
 authRouter.post("/login", CreateUserValidateData.login, AuthControllers.login);
 
-authRouter.get(
-  "/logout",
-  function (req, res, next) {
-    res.send({ success: true, message: "Déconnection" });
-  }
-);
+authRouter.get("/logout", () => {
+  res.send({ success: true, message: "Déconnection" });
+});
 
 module.exports = authRouter;
