@@ -22,13 +22,13 @@ const CreateUserValidateData = {
     ) {
       return res.status(400).send({
         success: false,
-        message: "Les champs obligatoires ne sont pas tous remplis",
+        errors: {email: "Les champs obligatoires ne sont pas tous remplis"}
       });
     }
     if (!validator.isEmail(email)) {
       return res.status(400).send({
         success: false,
-        message: "L'email saisis n'est pas valide",
+        errors: {email: "L'email saisis n'est pas valide"}
       });
     }
     if (cgu === "true") {
@@ -63,13 +63,18 @@ const CreateUserValidateData = {
     if (!email || !password) {
       return res.status(400).send({
         success: false,
-        message: "Les champs obligatoires ne sont pas tous remplis",
+        errors: {
+          email: "error",
+          password: "error"
+        }
       });
     }
     if (!validator.isEmail(email)) {
       return res.status(400).send({
         success: false,
-        message: "L'email saisis n'est pas valide",
+        errors: {
+          email: "email not invalable"
+        }
       });
     }
     next();

@@ -5,6 +5,8 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 
+const cors = require('cors')
+
 const publicRouter = require('./routes/publicRoutes.js')
 const authRouter = require('./routes/authRoutes.js')
 const userRouter = require('./routes/userRoutes.js')
@@ -17,6 +19,7 @@ const bodyParser = require('body-parser')
 require('./plugin/mongoose')
 
 //ajout des modules dans l'app
+app.use(cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 

@@ -34,14 +34,14 @@ const AuthControllers = {
         if (user === null) {
           return res.status(401).send({
             success: false,
-            message: "Informations de connexion incorrectes",
+            errors: {email: "Informations de connexion incorrectes"}
           });
         }
         let passwordsDoMatch = bcrypt.compareSync(password, user.password, saltRounds);
         if (!passwordsDoMatch) {
           return res.status(401).send({
             success: false,
-            message: "Informations de connexion incorrectes",
+            errors: {email: "Informations de connexion incorrectes"}
           });
         } else {
           jwt.sign(
