@@ -19,9 +19,7 @@ const teamSchema = mongoose.Schema(
         Permission: { type: [mongoose.ObjectId], ref: 'permission'},
     }],
     chat: [{
-        message: {type: String},
-        user: {type: mongoose.ObjectId, ref: 'user'},
-        time: {type: Date, default: new Date}
+        message: {type: mongoose.ObjectId, ref: 'chat'},
     }],
     picture: {
       type: String,
