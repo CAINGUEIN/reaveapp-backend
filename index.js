@@ -11,6 +11,7 @@ const publicRouter = require('./routes/publicRoutes.js')
 const authRouter = require('./routes/authRoutes.js')
 const userRouter = require('./routes/userRoutes.js')
 const socialRouter = require('./routes/socialRoutes.js')
+const spaceRoutes = require('./routes/spaceRoutes.js')
 
 //extension d'express
 const bodyParser = require('body-parser')
@@ -27,6 +28,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/auth', authRouter)
 app.use('/user', userRouter)
 app.use('/social', socialRouter)
+app.use('/space', spaceRoutes)
 app.use('/', publicRouter)
 
 module.exports = app;

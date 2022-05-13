@@ -4,13 +4,17 @@ const tools = require("../tools/functionHelpToken");
 
 const TokenHelpers = {
   verifyTokenId(req, res, next) {
+    console.log("avant verify",tools.extractToken(req, res));
+    console.log("JWT key", JWT_KEY);
+    console.log("JWT verify", jwt.verify(tools.extractToken(req, res), JWT_KEY));
+
     let decodedToken = jwt.verify(tools.extractToken(req, res), JWT_KEY);
     if (decodedToken._id) {
-      console.log(decodedToken);
+      console.log("dans le OK token",decodedToken);
       req.decodedToken = decodedToken;
       next();
     } else {
-      console.log(decodedToken);
+      console.log("dans le pas ok ",decodedToken);
     }
   },
 };

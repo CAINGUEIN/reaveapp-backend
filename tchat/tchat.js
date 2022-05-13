@@ -1,4 +1,4 @@
-const ChatModel = require("../models/chats/chat");
+const ChatModel = require("../models/chats/messages.js");
 
 let io;
 

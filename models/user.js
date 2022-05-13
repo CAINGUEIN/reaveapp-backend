@@ -31,18 +31,30 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       require: true,
     },
-    ecoRole: {
-      type: [mongoose.ObjectId], ref: 'ecoRole'
-    },
-    gameRole: {
-      type: [mongoose.ObjectId], ref: 'gameRole'
-    },
-    friends: {
-      type: [mongoose.ObjectId], ref: 'user'
-    },
-    teams: {
-      type: [mongoose.ObjectId], ref: 'team'
-    },
+    ecoRole: [
+      {
+        type: mongoose.ObjectId,
+        ref: "ecoRole",
+      },
+    ],
+    gameRole: [
+      {
+        type: mongoose.ObjectId,
+        ref: "gameRole",
+      },
+    ],
+    friends: [
+      {
+        type: mongoose.ObjectId,
+        ref: "user",
+      },
+    ],
+    spaces: [
+      {
+        type: mongoose.ObjectId,
+        ref: "space",
+      },
+    ],
     picture: {
       type: String,
       default: "",
@@ -51,12 +63,18 @@ const userSchema = mongoose.Schema(
       type: String,
       maxLength: 158,
     },
-    followers: {
-      type: [mongoose.ObjectId], ref: 'user'
-    },
-    following: {
-      type: [mongoose.ObjectId], ref: 'user'
-    },
+    followers: [
+      {
+        type: mongoose.ObjectId,
+        ref: "user",
+      },
+    ],
+    following: [
+      {
+        type: mongoose.ObjectId,
+        ref: "user",
+      },
+    ],
   },
   {
     timestamps: true,

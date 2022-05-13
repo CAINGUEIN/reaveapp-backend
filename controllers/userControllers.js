@@ -10,15 +10,20 @@ const userControllers = {
         res.status(400).send({ success: false, message: "Erreur suppression" });
       });
   },
-  infoUser(req, res) {
+  async infoUser(req, res) {
     UserModel.findById(req.decodedToken._id)
-      .then((user) => {
-        res
-          .status(200)
-          .send({ success: true, message: "Ok data user", data: user });
-      })
-      .catch(() => {
-        res.status(400).send({ success: false, message: "Erreur data user" });
+      .populate("spaces")
+      .exec((err, user) => {
+        if (err)
+          return res.status(400).send({
+            success: false,
+            message: "Erreur data user",
+          });
+        return res.status(200).send({
+          success: true,
+          message: "Ok data user",
+          data: user,
+        });
       });
   },
   updateUser(req, res) {
