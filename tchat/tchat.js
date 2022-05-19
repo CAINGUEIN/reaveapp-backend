@@ -18,9 +18,10 @@ exports.socketConnection = (server) => {
   io.on("connection", (socket) => {
     //join room
     socket.on("connectionWithRoom", (data) => {
-      socket.leaveAll();
-      socket.join(data.room);
-      socket.room = data.room;
+      if (socket.room !== data.room) {
+        socket.room = data.room;
+        socket.join(socket.room);
+      }
       socket._id_user = data._id_user;
       RoomModel.findById(data.room)
         .populate({

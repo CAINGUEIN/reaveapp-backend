@@ -268,6 +268,86 @@ const SpaceControllers = {
         });
       });
   },
+  async addRoom(req, res) {
+    console.log(req.body);
+    
+    //créer la room
+    let createRoom = {
+      name: req.body.name,
+    };
+    const newRoom = await RoomModel.create(createRoom).catch((err) => {
+      console.log(err);
+      return "erreur";
+    });
+    if (newRoom === "erreur") {
+      return res.status(400).send({
+        success: false,
+        message: "error create room",
+      });
+    }
+    
+    //recup la category
+    //et ajouté la room dans la category
+    const category = await CategoryModel.findByIdAndUpdate(
+      req.body._id_category,
+      {
+        $push: { _id_rooms: newRoom._id },
+      }
+    ).catch((err) => {
+      console.log(err);
+      return "erreur";
+    });
+    if (category === "erreur") {
+      return res.status(400).send({
+        success: false,
+        message: "error add room in category",
+      });
+    }
+
+    return res.status(200).send({
+      success: true,
+      message: "Ok create room and add in category",
+    });
+
+  },
+  async addCategory(req, res) {
+    //créer la category
+    let createCategory = {
+      name: req.body.name,
+    };
+    const newCategory = await CategoryModel.create(createCategory).catch((err) => {
+      console.log(err);
+      return "erreur";
+    });
+    if (newCategory === "erreur") {
+      return res.status(400).send({
+        success: false,
+        message: "error create category",
+      });
+    }
+    //recup la space
+    //et ajouté la category dans le space
+    const category = await DataSpaceModel.findByIdAndUpdate(
+      req.body._id_dataOfSpace,
+      {
+        $push: { _id_categories: newCategory._id },
+      }
+    ).catch((err) => {
+      console.log(err);
+      return "erreur";
+    });
+    if (category === "erreur") {
+      return res.status(400).send({
+        success: false,
+        message: "error add category in space",
+      });
+    }
+
+    return res.status(200).send({
+      success: true,
+      message: "Ok create category and add in space",
+    });
+  },
 };
 
 module.exports = SpaceControllers;

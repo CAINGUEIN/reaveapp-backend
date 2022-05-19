@@ -1,5 +1,5 @@
 const express = require("express");
-const friendsRouter = express.Router();
+const spaceRouter = express.Router();
 
 const TokenHelpers = require("../middlewares/tokenHelpers");
 const SpaceControllers = require("../controllers/spacesControllers");
@@ -7,20 +7,30 @@ const SpaceControllers = require("../controllers/spacesControllers");
 //TODO: prevoir un middleware pour recup et stocker une image
 // l'image une fois stocker doit rendre un url pour le mettre dans la db
 
-friendsRouter.post(
+spaceRouter.post(
   "/create",
   TokenHelpers.verifyTokenId,
   SpaceControllers.createSpace,
 );
-friendsRouter.post(
+spaceRouter.post(
   "/checkSpace",
   TokenHelpers.verifyTokenId,
   SpaceControllers.checkSpace,
 );
-friendsRouter.post(
+spaceRouter.post(
   "/allRooms",
   TokenHelpers.verifyTokenId,
   SpaceControllers.allRooms,
 );
+spaceRouter.post(
+  "/addRoom",
+  TokenHelpers.verifyTokenId,
+  SpaceControllers.addRoom,
+);
+spaceRouter.post(
+  "/addCategory",
+  TokenHelpers.verifyTokenId,
+  SpaceControllers.addCategory,
+);
 
-module.exports = friendsRouter;
+module.exports = spaceRouter;
