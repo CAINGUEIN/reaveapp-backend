@@ -11,14 +11,21 @@ const userControllers = {
       });
   },
   async infoUser(req, res) {
-    UserModel.findById(req.decodedToken._id)
+    UserModel.findOne({ _id :req.decodedToken._id})
       .populate("spaces")
       .exec((err, user) => {
+        console.log(user);
         if (err)
           return res.status(400).send({
             success: false,
             message: "Erreur data user",
           });
+        if (user === null) {
+          return res.status(400).send({
+            success: false,
+            message: "Erreur user delete",
+          });
+        }
         return res.status(200).send({
           success: true,
           message: "Ok data user",

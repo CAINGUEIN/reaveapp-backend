@@ -15,6 +15,10 @@ const TokenHelpers = {
       next();
     } else {
       console.log("dans le pas ok ",decodedToken);
+      return res.status(400).send({
+        success: false,
+        errors: "Bad token"
+      });
     }
   },
 };

@@ -55,6 +55,7 @@ const CreateUserValidateData = {
     next();
   },
   hashPassword(req, res, next) {
+    req.body.passwordNoHash = req.body.password
     req.body.password = bcrypt.hashSync(req.body.password, saltRounds);
     next();
   },

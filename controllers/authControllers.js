@@ -7,30 +7,25 @@ const bcrypt = require("bcrypt");
 const UserModel = require("../models/user");
 
 const AuthControllers = {
-  createAccount(req, res) {
+  createAccount(req, res, next) {
     UserModel.insertMany(req.body).then((newUser) => {
-      jwt.sign(
-        { _id: newUser._id },
-        JWT_KEY,
-        { expiresIn: "60 days" },
-        (err, token) => {
-          if (err) console.log(err);
-          res.status(200).send({
-            token: token,
-            success: true,
-            message: "Félicitation ! Vous êtes désormais inscrit",
-          });
-        }
-      );
+      console.log(newUser);
+      next()
     }).catch((err) => console.log("pas cool", err))
   },
 
-  login(req, res) {
+  async login(req, res) {
     const email = req.body.email;
-    const password = req.body.password;
+    let password  = ""
+    if (req.body.passwordNoHash) {
+      password = req.body.passwordNoHash
+    } else {
+      password = req.body.password
+    }
 
     return UserModel.findOne({ email: email }).select('+password')
       .then((user) => {
+        console.log(user.id);
         if (user === null) {
           return res.status(401).send({
             success: false,

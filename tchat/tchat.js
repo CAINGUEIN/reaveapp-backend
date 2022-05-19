@@ -1,4 +1,5 @@
-const ChatModel = require("../models/chats/messages.js");
+const MessageModel = require("../models/chats/messages.js");
+const RoomModel = require("../models/chats/rooms");
 
 let io;
 
@@ -15,45 +16,69 @@ exports.socketConnection = (server) => {
   });
 
   io.on("connection", (socket) => {
-    socket.on("connectionWithRoom", (user, room) => {
-      socket.join(room)
-      ChatModel.find((err, result) => {
-        if (err) throw err;
-        messages = result;
-      });
-    });
-
-    socket.emit("loggedIn", {
-      users: users.map((s) => s.username),
-      messages: messages,
+    //join room
+    socket.on("connectionWithRoom", (data) => {
+      socket.leaveAll();
+      socket.join(data.room);
+      socket.room = data.room;
+      socket._id_user = data._id_user;
+      RoomModel.findById(data.room)
+        .populate({
+          path: "_id_messages",
+          populate: {
+            path: "_id_sender",
+          },
+        })
+        .exec((err, result) => {
+          console.log(result);
+          if (err) {
+            return err;
+          }
+          socket.emit("loggedIn", {
+            users: users,
+            messages: result,
+          });
+        });
     });
 
     //New User
     socket.on("newUser", (username) => {
       console.log(username + " a fait un entrée fracassante");
       socket.username = username;
-      users.push(socket);
-
       io.emit("userOnline", socket.username);
     });
 
     //New Message
     socket.on("msg", (msg) => {
-      let message = new ChatModel({
-        user: socket.username,
-        msg: msg,
+      let message = new MessageModel({
+        _id_sender: socket._id_user,
+        content: msg,
       });
-
       message.save((err, result) => {
         if (err) throw err;
-        messages.push(result);
-        io.emit("msg", message);
+        MessageModel.findById(result._id)
+          .populate("_id_sender")
+          .exec((err, result) => {
+            if (err) throw err;
+            messages.push(result);
+            io.emit("msg", result);
+          });
       });
+      console.log(message);
+      RoomModel.findByIdAndUpdate(socket.room, {
+        $push: { _id_messages: message._id },
+      })
+        .then((room) => {
+          console.log("ok");
+        })
+        .catch((err) => {
+          console.log("ok");
+        });
     });
 
     //Delete Message
     socket.on("deleteMsg", (msg, key) => {
-      ChatModel.findByIdAndRemove(msg)
+      MessageModel.findByIdAndRemove(msg)
         .then(() => {
           console.log("Suppression Ok", msg, key);
           messages.splice(key, 1);

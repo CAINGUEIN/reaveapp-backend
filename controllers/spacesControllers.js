@@ -1,6 +1,10 @@
 const SpaceModel = require("../models/space/space");
 const DataSpaceModel = require("../models/space/dataSpace");
 const UserModel = require("../models/user");
+const CategoryModel = require("../models/chats/cathegories");
+const RoomModel = require("../models/chats/rooms");
+
+//TODO: si trop de bug voir a faire des transaction
 
 const SpaceControllers = {
   async createSpace(req, res) {
@@ -32,6 +36,39 @@ const SpaceControllers = {
         message: "error create Space",
       });
     }
+    //creation d'une room par default
+    let createRoom = {
+      name: "default",
+    };
+    const newRoom = await RoomModel.create(createRoom).catch((err) => {
+      console.log(err);
+      return "erreur";
+    });
+    if (newRoom === "erreur") {
+      return res.status(400).send({
+        success: false,
+        message: "error create room",
+      });
+    }
+
+    //création d'une cathegory general
+    let createCathegory = {
+      name: "general",
+      _id_rooms: newRoom._id,
+    };
+    const newCategory = await CategoryModel.create(createCathegory).catch(
+      (err) => {
+        console.log(err);
+        return "erreur";
+      }
+    );
+    if (newCategory === "erreur") {
+      return res.status(400).send({
+        success: false,
+        message: "error create category",
+      });
+    }
+
     //creation de la data pour l'associer au space
     let createData = {
       users: {
@@ -40,6 +77,7 @@ const SpaceControllers = {
         _id_permissions: "god",
       },
       _id_space: newSpace._id,
+      _id_categories: newCategory._id,
     };
     const newData = await DataSpaceModel.create(createData).catch((err) => {
       console.log(err);
@@ -68,28 +106,130 @@ const SpaceControllers = {
 
     //recup l'id du space et le rajouté dans le user
     // puis renvoyer la nouvelle liste de space pour une mise a jour du client
-    const updateUser = await UserModel.findOneAndUpdate(req.decodedToken._id, {
-      $push: { spaces: updateSpace._id },
-    }).catch((err) => {
+    console.log(req.decodedToken._id);
+    UserModel.findByIdAndUpdate(
+      req.decodedToken._id,
+      {
+        $push: { spaces: updateSpace._id },
+      },
+      { new: true, runValidators: true }
+    )
+      .populate("spaces")
+      .exec((err, user) => {
+        if (err) {
+          return res.status(400).send({
+            success: false,
+            message: "Erreur data user",
+            data: err,
+          });
+        }
+        return res.status(200).send({
+          success: true,
+          message: "create space ok",
+          data: user,
+          idNewSpace: updateSpace._id,
+        });
+      });
+  },
+  async addUserInSpace(req, res) {
+    // avoir l'id du dataOfSpace, du user qui invite et l'invité
+
+    // trouvé le dataOf Space
+    const dataOfSpace = await DataSpaceModel.findById(req.body.dataOfSpace.id);
+
+    // cherché si le user qui invite a le droit
+    // pour le moment pas de droit mais au moins qui soit dans le space
+    const userHost = await dataOfSpace.users
+      .findById(req.decodedToken._id)
+      .catch((err) => {
+        console.log(err);
+        return "erreur";
+      });
+    if (userHost === "erreur") {
+      return res.status(400).send({
+        success: false,
+        message: "error permission User",
+      });
+    }
+
+    //add le userGest
+    addUserGest = {
+      users: {
+        _id_user: req.userGest._id,
+        _id_roles: "user",
+        _id_permissions: "user",
+      },
+    };
+
+    const updateData = await dataOfSpace.users
+      .push(addUserGest)
+      .save()
+      .catch((err) => {
+        console.log(err);
+        return "erreur";
+      });
+    if (updateData === "erreur") {
+      return res.status(400).send({
+        success: false,
+        message: "error update Space",
+      });
+    }
+
+    return res.status(200).send({
+      success: true,
+      message: "add User in space ok",
+      data: updateData,
+    });
+  },
+  async deleteSpace(req, res) {
+    //le plus simple serais d'avoir le dataOfSpace car
+    // l'id des users pour leur retiré l'acces au space delete
+    // id du space pour le desactivé
+    // et peut etre utile aussi les cathegory du chat
+
+    //recup de la data
+    const dataOfSpace = await DataSpaceModel.findById(req.body.dataOfSpace.id);
+
+    //update des users pour leur retirer le space
+    const updateInUsers = await UserModel.findByIdAndUpdate(
+      dataOfSpace.users._id_user,
+      { $pull: { spaces: req.body.dataOfSpace.id } },
+      { runValidators: true }
+    ).catch((err) => {
       console.log(err);
       return "erreur";
     });
-    if (updateUser === "erreur") {
+    if (updateInUsers === "erreur") {
       return res.status(400).send({
         success: false,
         message: "error update user",
       });
     }
 
+    //dans un premier temps delete du space mais peut etre pour la production mise en 40aine
+    //pour une remise en ligne en cas d'erreur
+    const removeSpace = await SpaceModel.findOneAndDelete(
+      dataOfSpace._id_space
+    ).catch((err) => {
+      console.log(err);
+      return "erreur";
+    });
+    if (removeSpace === "erreur") {
+      return res.status(400).send({
+        success: false,
+        message: "error remove space",
+      });
+    }
+
+    //pour le moment je ne traite pas de l'historique des cathegories et room qui sont toujours stocké
     return res.status(200).send({
       success: true,
-      message: "create space ok",
+      message: "remove space Ok",
       data: updateUser,
-      idNewSpace: updateSpace._id
+      idNewSpace: updateSpace._id,
     });
   },
   async checkSpace(req, res) {
-    console.log(req.body._id);
     SpaceModel.findById(req.body._id)
       .populate("dataOfSpace")
       .exec((err, space) => {
@@ -97,12 +237,34 @@ const SpaceControllers = {
           return res.status(400).send({
             success: false,
             message: "Erreur data space",
-            data: err
+            data: err,
           });
         return res.status(200).send({
           success: true,
           message: "Ok data space",
           data: space,
+        });
+      });
+  },
+  async allRooms(req, res) {
+    DataSpaceModel.findById(req.body._id)
+      .populate({
+        path: "_id_categories",
+        populate: {
+          path: "_id_rooms",
+        },
+      })
+      .exec((err, allRooms) => {
+        if (err)
+          return res.status(400).send({
+            success: false,
+            message: "Erreur data space for allRooms",
+            data: err,
+          });
+        return res.status(200).send({
+          success: true,
+          message: "Ok data space for allRooms",
+          data: allRooms,
         });
       });
   },

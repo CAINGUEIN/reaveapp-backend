@@ -1,5 +1,9 @@
 const mongoose = require("mongoose");
 
+/**
+ * mon but ici c'est d'avoir un peut la bd qui centralise et interconnect
+ */
+
 const dataSpaceSchema = mongoose.Schema(
   {
     users: [

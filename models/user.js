@@ -25,11 +25,9 @@ const userSchema = mongoose.Schema(
     }, //String Hasher
     birthDay: {
       type: String,
-      require: true,
     },
     newsLetter: {
       type: Boolean,
-      require: true,
     },
     ecoRole: [
       {
@@ -75,6 +73,12 @@ const userSchema = mongoose.Schema(
         ref: "user",
       },
     ],
+    dm: [
+      {
+        type: mongoose.ObjectId,
+        ref: "room",
+      },
+    ]
   },
   {
     timestamps: true,

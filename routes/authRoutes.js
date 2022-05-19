@@ -7,7 +7,7 @@ const AuthControllers = require("../controllers/authControllers");
 
 authRouter.post(
   "/register",
-  CreateUserValidateData.signup,
+  //CreateUserValidateData.signup,
   CreateUserValidateData.hashPassword,
   BdHelpers.ifExist({
     bd: "user",
@@ -17,12 +17,13 @@ authRouter.post(
     bd: "user",
     target: "email",
   }),
-  AuthControllers.createAccount
+  AuthControllers.createAccount,
+  AuthControllers.login
 );
 
-authRouter.post("/login", CreateUserValidateData.login, AuthControllers.login);
+authRouter.post("/login", /* CreateUserValidateData.login, */ AuthControllers.login);
 
-authRouter.get("/logout", () => {
+authRouter.get("/logout", (req, res) => {
   res.send({ success: true, message: "Déconnection" });
 });
 

@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const categorySchema = mongoose.Schema(
   {
     name: { require: true, type: String },
-    _id_space: { type: mongoose.ObjectId, ref: "space" },
     _id_rooms: [{ type: mongoose.ObjectId, ref: "room" }],
     _id_writes: [{ type: mongoose.ObjectId, ref: "permission" }],
     _id_reads: [{ type: mongoose.ObjectId, ref: "permission" }],
