@@ -8,29 +8,41 @@ const SpaceControllers = require("../controllers/spacesControllers");
 // l'image une fois stocker doit rendre un url pour le mettre dans la db
 
 spaceRouter.post(
-  "/create",
-  TokenHelpers.verifyTokenId,
-  SpaceControllers.createSpace,
-);
-spaceRouter.post(
   "/checkSpace",
   TokenHelpers.verifyTokenId,
-  SpaceControllers.checkSpace,
+  SpaceControllers.checkSpace
 );
 spaceRouter.post(
   "/allRooms",
   TokenHelpers.verifyTokenId,
-  SpaceControllers.allRooms,
+  SpaceControllers.allRooms
 );
+
+//TODO: prevoir un middleware qui verifie les droits
 spaceRouter.post(
+  "/create",
+  TokenHelpers.verifyTokenId,
+  SpaceControllers.createSpace
+);
+spaceRouter.put(
   "/addRoom",
   TokenHelpers.verifyTokenId,
-  SpaceControllers.addRoom,
+  SpaceControllers.addRoom
 );
 spaceRouter.post(
+  "/deleteRoom",
+  TokenHelpers.verifyTokenId,
+  SpaceControllers.deleteRoom
+);
+spaceRouter.put(
   "/addCategory",
   TokenHelpers.verifyTokenId,
-  SpaceControllers.addCategory,
+  SpaceControllers.addCategory
+);
+spaceRouter.post(
+  "/deleteCategory",
+  TokenHelpers.verifyTokenId,
+  SpaceControllers.deleteCategory
 );
 
 module.exports = spaceRouter;

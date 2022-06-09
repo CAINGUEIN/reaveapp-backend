@@ -3,6 +3,7 @@ const DataSpaceModel = require("../models/space/dataSpace");
 const UserModel = require("../models/user");
 const CategoryModel = require("../models/chats/cathegories");
 const RoomModel = require("../models/chats/rooms");
+const MessagesModel = require("../models/chats/messages");
 
 //TODO: si trop de bug voir a faire des transaction
 
@@ -270,7 +271,7 @@ const SpaceControllers = {
   },
   async addRoom(req, res) {
     console.log(req.body);
-    
+
     //créer la room
     let createRoom = {
       name: req.body.name,
@@ -285,7 +286,7 @@ const SpaceControllers = {
         message: "error create room",
       });
     }
-    
+
     //recup la category
     //et ajouté la room dans la category
     const category = await CategoryModel.findByIdAndUpdate(
@@ -308,17 +309,76 @@ const SpaceControllers = {
       success: true,
       message: "Ok create room and add in category",
     });
-
+  },
+  async deleteRoom(req, res) {
+    //TODO: voir a mettre la room delete en 40aine pour la remettre a la demande du user
+    console.log(req.body);
+    //recup toute le message de la room et les deletes
+    const room = await RoomModel.findById(req.body._id_room).catch((err) => {
+      console.log(err);
+      return "erreur";
+    });
+    if (room === "erreur") {
+      return res.status(400).send({
+        success: false,
+        message: "error room data",
+      });
+    }
+    const deleteMessages = await MessagesModel.findByIdAndDelete(
+      room._id_messages
+    ).catch((err) => {
+      console.log(err);
+      return "erreur";
+    });
+    if (deleteMessages === "erreur") {
+      return res.status(400).send({
+        success: false,
+        message: "error delete messages for room",
+      });
+    }
+    //recup la category et effacer la room
+    const category = await CategoryModel.findByIdAndUpdate(
+      req.body._id_categories,
+      {
+        $pull: { _id_rooms: req.body._id_rooms },
+      }
+    ).catch((err) => {
+      console.log(err);
+      return "erreur";
+    });
+    if (category === "erreur") {
+      return res.status(400).send({
+        success: false,
+        message: "error update category for delete room",
+      });
+    }
+    //delete la room
+    const roomDelete = await RoomModel.findByIdAndDelete(req.body._id_room).catch((err) => {
+      console.log(err);
+      return "erreur";
+    });
+    if (roomDelete === "erreur") {
+      return res.status(400).send({
+        success: false,
+        message: "error room data",
+      });
+    }
+    return res.status(200).send({
+      success: true,
+      message: "Ok delete room",
+    });
   },
   async addCategory(req, res) {
     //créer la category
     let createCategory = {
       name: req.body.name,
     };
-    const newCategory = await CategoryModel.create(createCategory).catch((err) => {
-      console.log(err);
-      return "erreur";
-    });
+    const newCategory = await CategoryModel.create(createCategory).catch(
+      (err) => {
+        console.log(err);
+        return "erreur";
+      }
+    );
     if (newCategory === "erreur") {
       return res.status(400).send({
         success: false,
@@ -346,6 +406,88 @@ const SpaceControllers = {
     return res.status(200).send({
       success: true,
       message: "Ok create category and add in space",
+    });
+  },
+  async deleteCategory(req, res) {
+    //TODO: voir a mettre la category delete en 40aine pour la remettre a la demande du user
+    //recup la category
+    const category = await CategoryModel.findById(req.body._id_category).catch((err) => {
+      console.log(err);
+      return "erreur";
+    });
+    if (category === "erreur") {
+      return res.status(400).send({
+        success: false,
+        message: "error recup category",
+      });
+    }
+    //recup toute les room de la category
+    const rooms = await RoomModel.find({_id: category._id_rooms}).catch((err) => {
+      console.log(err);
+      return "erreur";
+    });
+    if (rooms === "erreur") {
+      return res.status(400).send({
+        success: false,
+        message: "error recup rooms",
+      });
+    }
+    //delete les messages des rooms
+    rooms.forEach(room => {
+      const deleteMessages = MessagesModel.findByIdAndDelete(
+        room._id_messages
+      ).catch((err) => {
+        console.log(err);
+        return "erreur";
+      });
+      if (deleteMessages === "erreur") {
+        return res.status(400).send({
+          success: false,
+          message: "error delete messages for room",
+        });
+      }
+    });
+    //delete la room
+    const roomDelete = await RoomModel.findByIdAndDelete(category._id_rooms).catch((err) => {
+      console.log(err);
+      return "erreur";
+    });
+    if (roomDelete === "erreur") {
+      return res.status(400).send({
+        success: false,
+        message: "error room data",
+      });
+    }
+    //recup la dataOfSpace et effacer la category
+    const dataOfSpace = await DataSpaceModel.findByIdAndUpdate(
+      req.body._id_dataOfSpace,
+      {
+        $pull: { _id_categories: req.body._id_category },
+      }
+    ).catch((err) => {
+      console.log(err);
+      return "erreur";
+    });
+    if (dataOfSpace === "erreur") {
+      return res.status(400).send({
+        success: false,
+        message: "error update dataOfSpace for delete category",
+      });
+    }
+    //delete la category
+    const categoryDelete = await CategoryModel.findByIdAndDelete(req.body._id_category).catch((err) => {
+      console.log(err);
+      return "erreur";
+    });
+    if (categoryDelete === "erreur") {
+      return res.status(400).send({
+        success: false,
+        message: "error delete room",
+      });
+    }
+    return res.status(200).send({
+      success: true,
+      message: "Ok delete category",
     });
   },
 };
