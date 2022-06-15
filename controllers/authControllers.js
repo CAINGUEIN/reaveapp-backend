@@ -8,6 +8,7 @@ const UserModel = require("../models/user");
 
 const AuthControllers = {
   createAccount(req, res, next) {
+    console.log(req.body);
     UserModel.insertMany(req.body).then((newUser) => {
       console.log(newUser);
       next()

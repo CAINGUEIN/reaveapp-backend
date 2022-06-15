@@ -10,8 +10,9 @@ const userControllers = {
         res.status(400).send({ success: false, message: "Erreur suppression" });
       });
   },
+
   async infoUser(req, res) {
-    UserModel.findOne({ _id :req.decodedToken._id})
+    UserModel.findOne({ _id: req.decodedToken._id })
       .populate("spaces")
       .exec((err, user) => {
         console.log(user);
@@ -33,6 +34,7 @@ const userControllers = {
         });
       });
   },
+
   updateUser(req, res) {
     UserModel.findByIdAndUpdate(
       req.decodedToken._id,

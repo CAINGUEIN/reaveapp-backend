@@ -11,6 +11,12 @@ const userSchema = mongoose.Schema(
       maxLength: 38,
       unique: true,
     },
+    profileTag: {
+      type: String,
+      minLength: 3,
+      maxLength: 38,
+      unique: true,
+    },
     email: {
       type: String,
       require: true,
@@ -47,6 +53,19 @@ const userSchema = mongoose.Schema(
         ref: "user",
       },
     ],
+    invitationSended: [
+      {
+        type: { type: String },
+        _targetUser_id: { type: mongoose.ObjectId, ref: "user", unique: true },
+        _targetSpace_id: { type: mongoose.ObjectId, ref: "space", unique: true },
+      },
+    ],
+    ban: [
+      {
+        type: mongoose.ObjectId,
+        ref: "user",
+      },
+    ],
     spaces: [
       {
         type: mongoose.ObjectId,
@@ -75,10 +94,37 @@ const userSchema = mongoose.Schema(
     ],
     dm: [
       {
-        type: mongoose.ObjectId,
-        ref: "room",
+        _id_forDM: { type: mongoose.ObjectId, ref: "user" },
+        messages: [
+          {
+            message: { type: String },
+          },
+        ],
       },
-    ]
+    ],
+    calendarSpacesShow: [
+      {
+        type: mongoose.ObjectId,
+        ref: "space",
+      },
+    ],
+    calendar: [
+      {
+        name: { type: String },
+        bio: { type: String },
+        color: { type: String },
+        start: { type: Date },
+        end: { type: Date },
+      },
+    ],
+    notifications: [
+      {
+        type: { type: String },
+        content: { type: String },
+        url: { type: String },
+        data: { type: Object },
+      },
+    ],
   },
   {
     timestamps: true,

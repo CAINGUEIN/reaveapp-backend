@@ -1,6 +1,7 @@
 const UserModel = require("../models/user");
 
 const followControllers = {
+  //TODO: penser a faire la notification
   follow(req, res) {
     UserModel.findByIdAndUpdate(
       req.decodedToken._id,

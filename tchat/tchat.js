@@ -1,11 +1,17 @@
-const MessageModel = require("../models/chats/messages.js");
-const RoomModel = require("../models/chats/rooms");
+const UserModel = require("../models/user");
+const SpaceModel = require("../models/space")
 
 let io;
 
 let users = [];
 let messages = [];
 console.log("dans tchat");
+
+/** Voir comment connecter simulataneant plusieur Room
+ * surement sur la method connectionWithRoom
+ * avantage modifier l'etat de connection pour les autres en affichant sur tout les rooms du user si il est la
+ * autre avantage notifier les message sur les room non ouverte
+ */
 
 exports.socketConnection = (server) => {
   io = require("socket.io")(server, {
@@ -23,23 +29,21 @@ exports.socketConnection = (server) => {
         socket.join(socket.room);
       }
       socket._id_user = data._id_user;
-      RoomModel.findById(data.room)
-        .populate({
-          path: "_id_messages",
-          populate: {
-            path: "_id_sender",
-          },
-        })
-        .exec((err, result) => {
-          console.log(result);
-          if (err) {
-            return err;
-          }
+      SpaceModel.findById(data._id_space)
+        .then((result)=>{
           socket.emit("loggedIn", {
             users: users,
-            messages: result,
+            messages: result.dataOfSpace/* voir comment faire mais en gros l'idée serait de renvoyer tout le 
+            message d'un space avec peut etre une limite des 50 derniers 
+            avec pour espect de pouvoir mettre un symbole pour prevenir d'un nouveau message*/,
           });
-        });
+        })
+        .catch((err)=>{
+          return res.status(400).send({
+            success: false,
+            message: "Erreur socket",
+          })
+        })
     });
 
     //New User
