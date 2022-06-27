@@ -57,7 +57,11 @@ const userSchema = mongoose.Schema(
       {
         type: { type: String },
         _targetUser_id: { type: mongoose.ObjectId, ref: "user", unique: true },
-        _targetSpace_id: { type: mongoose.ObjectId, ref: "space", unique: true },
+        _targetSpace_id: {
+          type: mongoose.ObjectId,
+          ref: "space",
+          unique: true,
+        },
       },
     ],
     ban: [
@@ -94,10 +98,14 @@ const userSchema = mongoose.Schema(
     ],
     dm: [
       {
-        _id_forDM: { type: mongoose.ObjectId, ref: "user" },
+        _id_users: [{ type: mongoose.ObjectId, ref: "user" }],
+        show: { type: Boolean },
         messages: [
           {
+            _id_Sended: { type: mongoose.ObjectId, ref: "user" },
             message: { type: String },
+            date: { type: Date },
+            options: { type: Object} // tout les param specifique
           },
         ],
       },

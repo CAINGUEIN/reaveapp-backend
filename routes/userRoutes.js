@@ -24,14 +24,25 @@ userRouter.delete(
 );
 
 userRouter.post(
+  "/ban",
+  TokenHelpers.verifyTokenId,
+  userControllers.banUser
+);
+
+userRouter.post(
   "/friend/add",
   TokenHelpers.verifyTokenId,
   FriendControllers.addFriend
 );
-userRouter.get(
-  "friend/validate",
+userRouter.post(
+  "/friend/validate",
   TokenHelpers.verifyTokenId,
   FriendControllers.validateAddFriend
+);
+userRouter.post(
+  "/friend/decline",
+  TokenHelpers.verifyTokenId,
+  FriendControllers.declineFriend
 );
 
 module.exports = userRouter;

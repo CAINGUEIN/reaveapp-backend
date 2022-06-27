@@ -11,9 +11,21 @@ const userControllers = {
       });
   },
 
+  banUser(req, res) {
+    //TODO: on devrais pouvoir ban a plusieur endroit donc peut etre passé par des middleware pour la condition d'arrivé au ban
+    //exemple si c'est avec un invite passer par supprimé invitationSended et la notification en middleware
+    //puis le controller qui place la personne en ban
+    //TODO: faire un middleware qui regard si la personne a ban ou a etait ban tout depend la route
+    //exemple le A a ban le B
+    // A peut tout voir de B mais ne ressois rien
+    // B peut tout voir de A si en publique mais aucune interaction abboutie mais sans message d'erreur
+    //push dans le ban
+  },
+
   async infoUser(req, res) {
     UserModel.findOne({ _id: req.decodedToken._id })
       .populate("spaces")
+      .populate("friends", "userName profileTag")
       .exec((err, user) => {
         console.log(user);
         if (err)
