@@ -1,9 +1,10 @@
 const UserModel = require("../models/user");
 
-const searchControllers = {
+const searchHelpers = {
   //ici une suite de services pour faire des recherche
   async usersNameList(req, res, next) {
     UserModel.find({
+      // ici un regex
       userName: { $regex: req.body.userName, $options: "i" },
     })
       .then((list) => {
@@ -36,6 +37,22 @@ const searchControllers = {
         });
       });
   },
+
+  async findWithId(req, res, next) {
+    console.log("findWithId");
+    UserModel.findById(req.decodedToken._id)
+      .then((result) => {
+        req.dataUser = result;
+        next();
+      })
+      .catch((err) => {
+        return res.status(400).send({
+          success: false,
+          message: "erreur d'_id",
+          data: err,
+        });
+      });
+  },
 };
 
-module.exports = searchControllers;
+module.exports = searchHelpers;

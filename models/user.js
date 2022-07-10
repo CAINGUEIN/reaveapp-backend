@@ -105,7 +105,7 @@ const userSchema = mongoose.Schema(
             _id_Sended: { type: mongoose.ObjectId, ref: "user" },
             message: { type: String },
             date: { type: Date },
-            options: { type: Object} // tout les param specifique
+            options: { type: Object }, // tout les param specifique
           },
         ],
       },
@@ -133,6 +133,23 @@ const userSchema = mongoose.Schema(
         data: { type: Object },
       },
     ],
+    lolData: {
+      lolPuuid: { type: String },
+      lolMatchs: [
+        //peut etre ici recup les idriot des matchs
+        //puis si on a recup les matchs mettre l'id mongoo
+        //et peut etre meme mettre la date pour pourvoir faire un ordre croissant
+        {
+          
+          _id_riot: { type: String },
+          _id_lolMatch: {
+            type: mongoose.ObjectId,
+            ref: "lolMatch",
+          },
+          gameStartTimestamp: { type: Number },
+        },
+      ],
+    },
   },
   {
     timestamps: true,

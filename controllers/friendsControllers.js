@@ -46,7 +46,7 @@ const FriendControllers = {
           },
           { runValidators: true }
         )
-          .then((data) => {
+          .then(() => {
             res.status(200).send({
               success: true,
               message: "Ok invitation user",

@@ -26,7 +26,6 @@ const AuthControllers = {
 
     return UserModel.findOne({ email: email }).select('+password')
       .then((user) => {
-        console.log(user.id);
         if (user === null) {
           return res.status(401).send({
             success: false,

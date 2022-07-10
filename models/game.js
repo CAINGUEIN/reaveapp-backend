@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const gameSchema = mongoose.Schema(
+const gameLolSchema = mongoose.Schema(
   {
     //_id generé par mongoose
     players: [
@@ -18,15 +18,15 @@ const gameSchema = mongoose.Schema(
     ],
     _id_match: String,
     info: {
-      gameCreation: String,
-      gameDuration: String,
-      gameEndTimestamp: String,
-      gameId: String,
+      gameCreation: Number,
+      gameDuration: Number,
+      gameEndTimestamp: Number,
+      gameId: Number,
       gameMode: String,
       gameName: String,
       gameStartTimestamp: Number,
       gameType: String,
-      gameVersion: Number,
+      gameVersion: String,
       mapId: Number,
       platformId: String,
       queueId: Number,
@@ -39,6 +39,6 @@ const gameSchema = mongoose.Schema(
   }
 );
 
-const GameModel = mongoose.model("space", gameSchema);
+const GameLolModel = mongoose.model("lolMatch", gameLolSchema);
 
-module.exports = GameModel;
+module.exports = GameLolModel;

@@ -27,7 +27,7 @@ const userControllers = {
       .populate("spaces")
       .populate("friends", "userName profileTag")
       .exec((err, user) => {
-        console.log(user);
+        console.log();
         if (err)
           return res.status(400).send({
             success: false,
@@ -64,6 +64,26 @@ const userControllers = {
       })
       .catch((err) => {
         res.status(400).send({ success: false, message: "Erreur update user" });
+      });
+  },
+  updateMatchUser(req, res) {
+    UserModel.findByIdAndUpdate(
+      req.decodedToken._id,
+      //target le bon _id_riot de la request
+      {
+        //list des chose a changer pour cette route
+        _id_lolMatch: req.body.userName,
+        dateStart: req.body.email,
+      },
+      { new: true, runValidators: true }
+    )
+      .then((user) => {
+        res
+          .status(200)
+          .send({ success: true, message: "Ok update last match for user", data: user });
+      })
+      .catch((err) => {
+        res.status(400).send({ success: false, message: "Erreur update last match" });
       });
   },
 };

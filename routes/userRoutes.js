@@ -11,12 +11,6 @@ userRouter.get(
   userControllers.infoUser
 );
 
-userRouter.put(
-  "/update",
-  TokenHelpers.verifyTokenId,
-  userControllers.updateUser
-);
-
 userRouter.delete(
   "/delete",
   TokenHelpers.verifyTokenId,

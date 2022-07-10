@@ -1,3 +1,4 @@
+const UserModel = require("../models/user");
 const functionBd = require("../tools/functionHelpBD");
 
 const BdHelpers = {
