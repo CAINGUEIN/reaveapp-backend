@@ -43,7 +43,6 @@ const DataFormateHelper = {
     let ListMatchsForRequest = [];
     listMatchs.map((match) => {
       let found = matchsUser.find((matchUser) => {
-        console.log(matchUser, match);
         if (match === matchUser._id_riot) return true
       });
       if (found) {

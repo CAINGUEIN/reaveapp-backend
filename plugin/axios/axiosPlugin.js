@@ -5,6 +5,9 @@ const Base = axios.create({
 });
 module.exports = Base;
 
+
+
+
 Base.interceptors.request.use(
   function (config) {
     config.headers["X-Riot-Token"] = process.env.API_LOL;

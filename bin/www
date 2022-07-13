@@ -23,8 +23,13 @@ let server = http.createServer(app);
 
 //socket.io
 
-const { socketConnection } = require('../tchat/tchat')
+const { socketConnection } = require("../tchat/tchat");
 socketConnection(server);
+
+//check data riot
+
+const { riotCheck } = require("../plugin/riot/riotCheck");
+riotCheck()
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -42,17 +47,14 @@ server.on("listening", onListening);
 
 function normalizePort(val) {
   let port = parseInt(val, 10);
-
   if (isNaN(port)) {
     // named pipe
     return val;
   }
-
   if (port >= 0) {
     // port number
     return port;
   }
-
   return false;
 }
 
@@ -91,3 +93,4 @@ function onListening() {
   let bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
   debug("Listening on " + bind);
 }
+

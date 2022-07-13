@@ -15,6 +15,7 @@ const socialRouter = require("./routes/socialRoutes.js");
 const spaceRoutes = require("./routes/spaceRoutes.js");
 const calendarPersonalRoutes = require("./routes/calendarPersonalRoutes.js");
 const searchRoutes = require("./routes/searchRoutes");
+const versionRouter = require("./routes/versionRoutes.js")
 
 //extension d'express
 const bodyParser = require("body-parser");
@@ -35,6 +36,7 @@ app.use("/user", userRouter);
 app.use("/social", socialRouter);
 app.use("/space", spaceRoutes);
 app.use("/search", searchRoutes);
+app.use("/version", versionRouter)
 app.use("/", publicRouter);
 
 
