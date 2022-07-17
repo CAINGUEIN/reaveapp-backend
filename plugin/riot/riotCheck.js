@@ -24,10 +24,10 @@ exports.riotCheck = () => {
 
 async function checkVersionFromRiot(MAJ) {
   const result = await riotServices.version();
-  if (MAJ === result.data[0]) {
-    return false;
-  } else {
+  if (result.status === 200 && MAJ !== result.data[0]) {
     return result.data[0];
+  } else {
+    return false;
   }
 }
 
