@@ -9,7 +9,6 @@ const RequestApiLol = {
     let result = await ServicesApiLol.matchsList(req.body.lolPuuid);
     if (result.status === 200) {
       req.resultListMatchsApiLol = result.data;
-      console.log("dans le data match list", result.data);
       req.lastMatch = result.data[0];
       next();
     } else {
@@ -22,7 +21,6 @@ const RequestApiLol = {
   },
 
   async requestMatchsListWithDataUser(req, res, next) {
-    console.log("dans le data match list");
     let result = await ServicesApiLol.matchsList(req.dataUser.lolData.lolPuuid);
     if (result.status === 200) {
       req.resultListMatchsApiLol = result.data;
@@ -39,10 +37,8 @@ const RequestApiLol = {
 
   async dataMatchInfo(req, res, next) {
     let result = await ServicesApiLol.dataMatchInfo(req.lastMatch);
-    console.log(result);
     if (result.status === 200) {
       req.resultLastMatchInfoApiLol = result.data;
-      console.log("dans le data match info");
       next();
     } else {
       return res.status(400).send({
@@ -57,7 +53,6 @@ const RequestApiLol = {
     let result = await ServicesApiLol.dataMatchTimeline(req.lastMatch);
     if (result.status === 200) {
       req.resultLastMatchTimelineApiLol = result.data;
-      console.log("dans le data match timeline", result.data);
       next();
     } else {
       return res.status(400).send({
@@ -69,7 +64,6 @@ const RequestApiLol = {
   },
 
   async requestManyMatchsInfo(req, res, next) {
-    console.log("requestMany");
     //fonction de tri des matchlist
     let ListMatchsForRequest = DataFormateHelper.listMatchForRequest(
       req.resultListMatchsApiLol,
@@ -81,7 +75,6 @@ const RequestApiLol = {
       let result = await ServicesApiLol.dataMatchInfo(
         ListMatchsForRequest[index]
       );
-      console.log(result.data);
       if (result.status === 200) {
         // création du array pour le push dans la DB
         let data = DataFormateHelper.infoLolMatch(
@@ -103,7 +96,6 @@ const RequestApiLol = {
       .then((games) => {
         //puis ajoue de la modif dans le userlolmatchs
         games.map((game) => {
-          console.log(game);
           let data = {
             _id_riot: game._id_match,
             _id_lolMatch: game._id,
@@ -114,7 +106,6 @@ const RequestApiLol = {
         next();
       })
       .catch((err) => {
-        console.log(err);
         return res.status(400).send({
           success: false,
           message: "Erreur save MatchLol",

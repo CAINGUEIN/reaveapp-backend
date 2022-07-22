@@ -1,10 +1,27 @@
 const ModelVersion = require("../../models/LOLVersion/versionJSON");
 const riotServices = require("./riotServices");
 
-exports.riotCheck = () => {
+exports.riotCheck = async () => {
   let MAJ = "";
   let interval = 600000;
   console.log("bonjour");
+  const result = await ModelVersion.find()
+  console.log(result);
+  if (result.length === 0) {
+    let version = await checkVersionFromRiot("");
+    if (version) {
+      MAJ = version;
+      let isVersion = await checkVersionFromBack(MAJ);
+      console.log(isVersion, MAJ, version);
+      if (!isVersion) {
+        createNewVersion(MAJ);
+      } else {
+        console.log('version a jour');
+      }
+    } else {
+      console.log("pas de version");
+    }
+  }
   setInterval(async () => {
     let version = await checkVersionFromRiot(MAJ);
     if (version) {
@@ -12,12 +29,11 @@ exports.riotCheck = () => {
       let isVersion = await checkVersionFromBack(MAJ);
       if (!isVersion) {
         createNewVersion(MAJ);
-        console.log("create new version");
       } else {
         console.log('version a jour');
       }
     } else {
-      console.log("version a jour");
+      console.log("pas de version");
     }
   }, interval);
 };
@@ -52,6 +68,8 @@ async function createNewVersion(MAJ) {
   ];
   let data = await createData(target, MAJ);
   data.version = MAJ ;
+  console.log(data, "ici");
+  console.log("create new version");
   ModelVersion.create(data);
 }
 

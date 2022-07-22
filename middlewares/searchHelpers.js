@@ -40,7 +40,7 @@ const searchHelpers = {
 
   async findWithId(req, res, next) {
     console.log("findWithId");
-    UserModel.findById(req.decodedToken._id)
+    UserModel.findById(req.decodedToken._id).sort({_id_match: -1})
       .then((result) => {
         req.dataUser = result;
         next();

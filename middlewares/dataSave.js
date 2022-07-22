@@ -84,10 +84,11 @@ const DataSave = {
                 data: err,
               });
             } else {
+              let cut = result.lolData.lolMatchs.length
               return res.status(200).send({
                 success: true,
                 message: "Ok pour la recup des 20 dernier matchs",
-                data: result.lolData.lolMatchs
+                data: result.lolData.lolMatchs.slice(0, 20)
               })
             }
           }
