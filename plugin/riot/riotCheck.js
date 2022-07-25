@@ -3,7 +3,7 @@ const riotServices = require("./riotServices");
 
 exports.riotCheck = async () => {
   let MAJ = "";
-  let interval = 1000;
+  let interval = 60000;
   console.log("bonjour");
   const result = await ModelVersion.find()
   console.log(result.length);
