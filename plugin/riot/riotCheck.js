@@ -6,7 +6,7 @@ exports.riotCheck = async () => {
   let interval = 600000;
   console.log("bonjour");
   const result = await ModelVersion.find()
-  console.log(result);
+  console.log(result.length);
   if (result.length === 0) {
     let version = await checkVersionFromRiot("");
     if (version) {

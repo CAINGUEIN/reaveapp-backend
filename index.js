@@ -1,6 +1,8 @@
 //module dotenv
 require("dotenv").config();
 
+console.log("coucou");
+
 //module express
 const express = require("express");
 const app = express();
