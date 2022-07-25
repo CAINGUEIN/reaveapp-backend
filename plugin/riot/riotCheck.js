@@ -41,6 +41,7 @@ exports.riotCheck = async () => {
 
 async function checkVersionFromRiot(MAJ) {
   const result = await riotServices.version();
+  console.log(result);
   if (result.status === 200 && MAJ !== result.data[0]) {
     return result.data[0];
   } else {
