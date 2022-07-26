@@ -23,7 +23,7 @@ app.set("port", port);
  * Create HTTP server.
  */
 
-const server = require("http").createServer(app);
+let server = http.createServer(app);
 
 //socket.io
 
