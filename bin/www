@@ -27,8 +27,8 @@ let server = http.createServer(app);
 
 //socket.io
 
-const { socketConnection } = require("../tchat/tchat");
-socketConnection(server);
+/* const { socketConnection } = require("../tchat/tchat");
+socketConnection(server); */
 
 //check data riot
 

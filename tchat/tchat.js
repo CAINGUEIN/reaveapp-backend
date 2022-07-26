@@ -1,7 +1,6 @@
 const UserModel = require("../models/user");
 const SpaceModel = require("../models/space")
 
-let io;
 
 let users = [];
 let messages = [];
@@ -16,9 +15,11 @@ console.log("dans tchat");
 exports.socketConnection = (server) => {
   io = require("socket.io")(server, {
     cors: {
+      origin: process.env.FRONT_URL,
       methods: ["GET", "POST"],
     },
   });
+  console.log("ici dans le socket", server)
 
   io.on("connection", (socket) => {
     //join room
