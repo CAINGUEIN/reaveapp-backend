@@ -20,6 +20,7 @@ exports.socketConnection = (server) => {
       methods: ["GET", "POST"],
     },
   });
+  console.log("ici dans le socket", io);
 
   io.on("connection", (socket) => {
     //join room
