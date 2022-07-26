@@ -6,8 +6,12 @@
 
 let app = require("../index");
 let debug = require("debug")("back:server");
-let http = require("http");
-
+let http = ""
+if (process.env.ENVIRONEMENT === "lab") {
+  http = require("node:https");
+} else {
+  http = require("node:http");
+}
 /**
  * Get port from environment and store in Express.
  */
@@ -29,7 +33,7 @@ socketConnection(server);
 //check data riot
 
 const { riotCheck } = require("../plugin/riot/riotCheck");
-riotCheck()
+riotCheck();
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -93,4 +97,3 @@ function onListening() {
   let bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
   debug("Listening on " + bind);
 }
-
