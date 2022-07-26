@@ -1,7 +1,5 @@
 const UserModel = require("../models/user");
-const SpaceModel = require("../models/space")
-
-let io;
+const SpaceModel = require("../models/space");
 
 let users = [];
 let messages = [];
@@ -14,11 +12,13 @@ console.log("dans tchat");
  */
 
 exports.socketConnection = (server) => {
-  io = require("socket.io")(server, {
+  const io = require("socket.io")(server, {
     cors: {
+      origin: process.env.FRONT_URL,
       methods: ["GET", "POST"],
     },
   });
+  console.log("ici dans le socket", server);
 
   io.on("connection", (socket) => {
     //join room
@@ -29,20 +29,21 @@ exports.socketConnection = (server) => {
       }
       socket._id_user = data._id_user;
       SpaceModel.findById(data._id_space)
-        .then((result)=>{
+        .then((result) => {
           socket.emit("loggedIn", {
             users: users,
-            messages: result.dataOfSpace/* voir comment faire mais en gros l'idée serait de renvoyer tout le 
+            messages:
+              result.dataOfSpace /* voir comment faire mais en gros l'idée serait de renvoyer tout le 
             message d'un space avec peut etre une limite des 50 derniers 
             avec pour espect de pouvoir mettre un symbole pour prevenir d'un nouveau message*/,
           });
         })
-        .catch((err)=>{
+        .catch((err) => {
           return res.status(400).send({
             success: false,
             message: "Erreur socket",
-          })
-        })
+          });
+        });
     });
 
     //New User
