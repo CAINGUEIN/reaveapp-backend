@@ -16,11 +16,9 @@ console.log("dans tchat");
 exports.socketConnection = (server) => {
   io = require("socket.io")(server, {
     cors: {
-      origin: process.env.FRONT_URL,
       methods: ["GET", "POST"],
     },
   });
-  console.log("ici dans le socket", io);
 
   io.on("connection", (socket) => {
     //join room
