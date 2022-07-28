@@ -60,7 +60,6 @@ const userSchema = mongoose.Schema(
         _targetSpace_id: {
           type: mongoose.ObjectId,
           ref: "space",
-          unique: true,
         },
       },
     ],
