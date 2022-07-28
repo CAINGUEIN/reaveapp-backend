@@ -56,7 +56,7 @@ const userSchema = mongoose.Schema(
     invitationSended: [
       {
         type: { type: String },
-        _targetUser_id: { type: mongoose.ObjectId, ref: "user", unique: true },
+        _targetUser_id: { type: mongoose.ObjectId, ref: "user" },
         _targetSpace_id: {
           type: mongoose.ObjectId,
           ref: "space",
