@@ -139,7 +139,6 @@ const userSchema = mongoose.Schema(
         //puis si on a recup les matchs mettre l'id mongoo
         //et peut etre meme mettre la date pour pourvoir faire un ordre croissant
         {
-          
           _id_riot: { type: String },
           _id_lolMatch: {
             type: mongoose.ObjectId,
