@@ -4,6 +4,6 @@ const versionRouter = express.Router();
 
 const TokenHelpers = require("../middlewares/tokenHelpers");
 
-versionRouter.get("/last", TokenHelpers.verifyTokenId, versionControllers.lastVersionLolData );
+versionRouter.get("/last", versionControllers.lastVersionLolData );
 
 module.exports = versionRouter;
