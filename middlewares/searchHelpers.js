@@ -37,9 +37,14 @@ const searchHelpers = {
         });
       });
   },
-
+/**
+ * @info recup les datas du user avec un trie _id_match
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @return {Object} req.dataUser 
+ */
   async findWithId(req, res, next) {
-    console.log("findWithId");
     UserModel.findById(req.decodedToken._id).sort({_id_match: -1})
       .then((result) => {
         req.dataUser = result;

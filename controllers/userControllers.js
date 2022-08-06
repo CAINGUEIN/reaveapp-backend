@@ -27,7 +27,6 @@ const userControllers = {
       .populate("spaces")
       .populate("friends", "userName profileTag")
       .exec((err, user) => {
-        console.log();
         if (err)
           return res.status(400).send({
             success: false,

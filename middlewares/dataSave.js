@@ -4,6 +4,7 @@ const UserModel = require("../models/user");
 
 const DataSave = {
   savePuuidAndLastMatchInfo(req, res, next) {
+    //si non on enregistre le PUUID
     UserModel.findByIdAndUpdate(
       req.decodedToken._id,
       {
@@ -38,7 +39,7 @@ const DataSave = {
   },
 
   saveMatchLol(req, res, next) {
-    //passer par une fonction helper pour formater la data
+    //passe par une fonction helper pour formater la data
     let data = DataFormateHelper.infoLolMatch(
       req.decodedToken._id,
       req.resultLastMatchInfoApiLol,
@@ -61,7 +62,6 @@ const DataSave = {
   },
 
   saveUpdateDataUser(req, res, next) {
-    console.log("save update");
     req.dataUser.save((err, result) => {
       if (err !== null) {
         return res.status(400).send({
@@ -70,31 +70,46 @@ const DataSave = {
           data: err,
         });
       } else {
-        console.log(result);
-        UserModel.populate(
-          result,
-          {
-            path: "lolData.lolMatchs._id_lolMatch",
-          },
-          (err, result) => {
-            if (err) {
-              return res.status(400).send({
-                success: false,
-                message: "Erreur populate last Match update",
-                data: err,
-              });
-            } else {
-              let cut = result.lolData.lolMatchs.length
-              return res.status(200).send({
-                success: true,
-                message: "Ok pour la recup des 20 dernier matchs",
-                data: result.lolData.lolMatchs.slice(0, 20)
-              })
-            }
-          }
-        );
+        next()
       }
     });
+  },
+
+  updateDataLolMatch(req, res, next) {
+    console.log(req.listMatchExist);
+    if (req.listMatchExist) {
+      for (let index = 0; index < req.listMatchExist.length; index++) {
+        for (
+          let indexBis = 0;
+          indexBis < req.listMatchExist[index].players.length;
+          indexBis++
+        ) {
+          if (
+            req.dataUser.lolData.lolPuuid ===
+            req.listMatchExist[index].players[indexBis].puuid
+          ) {
+            req.listMatchExist[index].players[indexBis]._id_user =
+              req.decodedToken._id;
+            let data = {
+              _id_riot: req.listMatchExist[index]._id_match,
+              _id_lolMatch: req.listMatchExist[index]._id,
+              gameStartTimestamp: req.listMatchExist[index].info.gameStartTimestamp,
+            };
+            req.dataUser.lolData.lolMatchs.push(data);
+          }
+        }
+        req.listMatchExist[index].save((err, result) => {
+          if (err) {
+            return res.status(400).send({
+              success: false,
+              message: "Erreur save lol match",
+              data: err,
+            });
+          }
+        });
+      }
+    }
+    next();
   },
 };
 

@@ -5,11 +5,18 @@ const ServicesApiLol = require("../plugin/axios/servicesApiLol");
 //TODO: voir a faire un system pour evité de requete trop l'api
 
 const RequestApiLol = {
+  /**
+   * @info recup les 20 dernier match du User chez riot
+   * @param {*} req
+   * @param {*} res
+   * @param {*} next
+   * @need req.body.lolPuuid
+   * @returns {Array} list of 20 matchs in req.resultListMatchsApiLol
+   */
   async requestMatchsListWithBody(req, res, next) {
     let result = await ServicesApiLol.matchsList(req.body.lolPuuid);
     if (result.status === 200) {
       req.resultListMatchsApiLol = result.data;
-      req.lastMatch = result.data[0];
       next();
     } else {
       return res.status(400).send({
@@ -20,11 +27,18 @@ const RequestApiLol = {
     }
   },
 
+  /**
+   * @info recup les 20 dernier match du User chez riot
+   * @param {*} req
+   * @param {*} res
+   * @param {*} next
+   * @need req.dataUser
+   * @returns {Array} list of 20 matchs in req.resultListMatchsApiLol
+   */
   async requestMatchsListWithDataUser(req, res, next) {
     let result = await ServicesApiLol.matchsList(req.dataUser.lolData.lolPuuid);
     if (result.status === 200) {
       req.resultListMatchsApiLol = result.data;
-      req.lastMatch = result.data[0];
       next();
     } else {
       return res.status(400).send({
@@ -64,17 +78,24 @@ const RequestApiLol = {
   },
 
   async requestManyMatchsInfo(req, res, next) {
+    let ListMatchsForRequest = "";
+    if (req.listMatchNoExist) {
+      ListMatchsForRequest = req.listMatchNoExist;
+    } else {
+      ListMatchsForRequest = DataFormateHelper.listMatchForRequest(
+        req.resultListMatchsApiLol,
+        req.dataUser.lolData.lolMatchs
+      );
+    }
     //fonction de tri des matchlist
-    let ListMatchsForRequest = DataFormateHelper.listMatchForRequest(
-      req.resultListMatchsApiLol,
-      req.dataUser.lolData.lolMatchs
-    );
+
     //fonction de request des matchs
     let dataInsert = [];
     for (let index = 0; index < ListMatchsForRequest.length; index++) {
       let result = await ServicesApiLol.dataMatchInfo(
         ListMatchsForRequest[index]
       );
+      console.log(result.data);
       if (result.status === 200) {
         // création du array pour le push dans la DB
         let data = DataFormateHelper.infoLolMatch(
