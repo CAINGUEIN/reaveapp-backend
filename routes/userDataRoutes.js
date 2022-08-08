@@ -3,6 +3,7 @@ const DataControllers = require("../controllers/dataControllers");
 const userDataRouter = express.Router()
 
 const DataMatchReturnControllers = require("../controllers/dataMatchReturnControllers");
+const FilterForQuery = require("../controllers/filterForQuery");
 const DataSave = require("../middlewares/dataSave");
 const RequestApiLol = require("../middlewares/requestApi");
 const searchHelpers = require("../middlewares/searchHelpers");
@@ -21,6 +22,7 @@ userDataRouter.post(
   userDataRouter.post(
     "/lol/filteredMatchList",
     TokenHelpers.verifyTokenId,
+    FilterForQuery.optionForLolHistory,
     DataMatchReturnControllers.twentyFilteredMatchLol,
   );
 

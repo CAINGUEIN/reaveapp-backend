@@ -26,17 +26,22 @@ const DataMatchReturnControllers = {
   },
 
   async twentyFilteredMatchLol(req, res, next) {
-    //pour les match gagné perdu value = boolean
-    //"statTotal.win": value, _id_user: req.decodedToken._id
-    //pour les match joué avec un champions value = string
-    //"statTotal.championName" : value, _id_user: req.decodedToken._id
-    //pour les match avec comme position value = string
-    //""
-    GameLolModel.find({
-      players: {
-        $elemMatch: { "statTotal.win": true, _id_user: req.decodedToken._id },
-      },
-    }).limite(20)
+    let perpage = "";
+    let page = "";
+    if (req.body.perpage === undefined) {
+      perpage = 20;
+    } else {
+      perpage = req.body.perpage;
+    }
+    if (req.body.page === undefined) {
+      page = 0;
+    } else {
+      page = req.body.page;
+    }
+    GameLolModel.find(req.optionQuery)
+      .sort({ "info.gameStartTimestamp": 1 })
+      .limit(perpage)
+      .skip(page * perpage)
       .then((result) => {
         return res.status(200).send({
           success: true,
