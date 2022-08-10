@@ -1,6 +1,7 @@
 const DataFormateHelper = require("../functionHelper/dataFormate");
 const GameLolModel = require("../models/game");
 const ServicesApiLol = require("../plugin/axios/servicesApiLol");
+const dayjs = require("dayjs");
 
 //TODO: voir a faire un system pour evité de requete trop l'api
 
@@ -49,6 +50,42 @@ const RequestApiLol = {
     }
   },
 
+  /**
+   *
+   */
+  async requestAllMatchFor3MounthsWithDataUser(req, res, next) {
+    //pour les 3 mois
+    let timestamp = Date.now();
+    let timeSubtract3Mounth = dayjs(timestamp).subtract(1, "month").unix();
+    //pour la boucle en cas de plus de 100 match sur 3 mois
+    let shouldContinue = true;
+    let start = 0;
+    //array des match sur 3 mois
+    let all3MonthMatch = [];
+    //data request
+    let puuid = req.dataUser.lolData.lolPuuid;
+    do {
+      let result = await ServicesApiLol.matchsListWithQuery(
+        puuid,
+        timeSubtract3Mounth,
+        start
+      );
+      if (result.status === 200) {
+        all3MonthMatch.push(result.data);
+        shouldContinue = result.data.length === 100;
+        start = start + 100;
+      } else {
+        return res.status(400).send({
+          success: false,
+          message: "Erreur call Api List Lol",
+          data: result.data,
+        });
+      }
+    } while (shouldContinue === true);
+    req.resultListMatchsApiLol = all3MonthMatch.flat();
+    next();
+  },
+
   async dataMatchInfo(req, res, next) {
     let result = await ServicesApiLol.dataMatchInfo(req.lastMatch);
     if (result.status === 200) {
@@ -95,7 +132,6 @@ const RequestApiLol = {
       let result = await ServicesApiLol.dataMatchInfo(
         ListMatchsForRequest[index]
       );
-      console.log(result.data);
       if (result.status === 200) {
         // création du array pour le push dans la DB
         let data = DataFormateHelper.infoLolMatch(
@@ -104,6 +140,15 @@ const RequestApiLol = {
           req.dataUser.lolData.lolPuuid
         );
         dataInsert.push(data);
+      } else if (result.status === 429) {
+        console.log('Dans la 429');
+        let data = DataFormateHelper.infoLolMatch(
+          req.decodedToken._id,
+          result.data,
+          req.dataUser.lolData.lolPuuid
+        );
+        dataInsert.push(data);
+        break;
       } else {
         return res.status(400).send({
           success: false,

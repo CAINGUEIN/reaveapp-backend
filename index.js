@@ -43,5 +43,4 @@ app.use("/search", searchRoutes);
 app.use("/version", versionRouter)
 app.use("/", publicRouter);
 
-
 module.exports = app;

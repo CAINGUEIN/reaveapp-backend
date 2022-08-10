@@ -13,9 +13,10 @@ userDataRouter.post(
     "/lol/lastMatchList",
     TokenHelpers.verifyTokenId,
     searchHelpers.findWithId,
-    RequestApiLol.requestMatchsListWithDataUser,
+    RequestApiLol.requestAllMatchFor3MounthsWithDataUser,
     RequestApiLol.requestManyMatchsInfo,
     DataSave.saveUpdateDataUser,
+    FilterForQuery.optionForLolHistory,
     DataMatchReturnControllers.twentyMatchLol,
   );
 
