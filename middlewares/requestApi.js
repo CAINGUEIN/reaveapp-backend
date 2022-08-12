@@ -74,11 +74,15 @@ const RequestApiLol = {
         all3MonthMatch.push(result.data);
         shouldContinue = result.data.length === 100;
         start = start + 100;
-      } else {
+      } else if (result.response.status === 429) {
+        req.limiteApiRiot = true;
+        shouldContinue = false;
+      }
+      if (result.status !== 200 && result.response.status !== 429) {
         return res.status(400).send({
           success: false,
           message: "Erreur call Api List Lol",
-          data: result.data,
+          data: result,
         });
       }
     } while (shouldContinue === true);
@@ -133,6 +137,7 @@ const RequestApiLol = {
         ListMatchsForRequest[index]
       );
       if (result.status === 200) {
+        console.log("dans la 200", result.status);
         // création du array pour le push dans la DB
         let data = DataFormateHelper.infoLolMatch(
           req.decodedToken._id,
@@ -140,24 +145,21 @@ const RequestApiLol = {
           req.dataUser.lolData.lolPuuid
         );
         dataInsert.push(data);
-      } else if (result.status === 429) {
-        console.log('Dans la 429');
-        let data = DataFormateHelper.infoLolMatch(
-          req.decodedToken._id,
-          result.data,
-          req.dataUser.lolData.lolPuuid
-        );
-        dataInsert.push(data);
+      } else if (result.response.status === 429) {
+        req.limiteApiRiot = true;
         break;
-      } else {
+      }
+      if (result.status !== 200 && result.response.status !== 429) {
+        console.log("autre erreur", result);
         return res.status(400).send({
           success: false,
           message: "Erreur call Api Info Lol",
-          data: result.data,
+          data: result,
         });
       }
     }
     //save dans la DB game
+    console.log(req.limiteApiRiot);
     GameLolModel.insertMany(dataInsert)
       .then((games) => {
         //puis ajoue de la modif dans le userlolmatchs

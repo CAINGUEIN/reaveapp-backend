@@ -16,7 +16,11 @@ Base.interceptors.request.use(
     return config;
   },
   function (error) {
+    if (error.response.status === 429) {
+      // If the error has status code 429, retry the request
+      return axios.request(error.config);
+  }
     // Do something with request error
-    return Promise.reject(error);
+    return Promise.reject(error.response);
   }
 );

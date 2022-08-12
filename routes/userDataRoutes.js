@@ -1,6 +1,6 @@
 const express = require("express");
 const DataControllers = require("../controllers/dataControllers");
-const userDataRouter = express.Router()
+const userDataRouter = express.Router();
 
 const DataMatchReturnControllers = require("../controllers/dataMatchReturnControllers");
 const FilterForQuery = require("../controllers/filterForQuery");
@@ -10,27 +10,31 @@ const searchHelpers = require("../middlewares/searchHelpers");
 const TokenHelpers = require("../middlewares/tokenHelpers");
 
 userDataRouter.post(
-    "/lol/lastMatchList",
-    TokenHelpers.verifyTokenId,
-    searchHelpers.findWithId,
-    RequestApiLol.requestAllMatchFor3MounthsWithDataUser,
-    RequestApiLol.requestManyMatchsInfo,
-    DataSave.saveUpdateDataUser,
-    FilterForQuery.optionForLolHistory,
-    DataMatchReturnControllers.twentyMatchLol,
-  );
-
-  userDataRouter.post(
-    "/lol/filteredMatchList",
-    TokenHelpers.verifyTokenId,
-    FilterForQuery.optionForLolHistory,
-    DataMatchReturnControllers.twentyFilteredMatchLol,
-  );
+  "/lol/lastMatchList",
+  TokenHelpers.verifyTokenId,
+  searchHelpers.findWithId,
+  RequestApiLol.requestAllMatchFor3MounthsWithDataUser,
+  RequestApiLol.requestManyMatchsInfo,
+  DataSave.saveUpdateDataUser,
+  FilterForQuery.optionForLolHistory,
+  DataMatchReturnControllers.twentyMatchLol
+);
 
 userDataRouter.post(
-    "/lol/matchSummary",
-    TokenHelpers.verifyTokenId,
-    DataControllers.lolMatchSummary
-  );
+  "/lol/filteredMatchList",
+  TokenHelpers.verifyTokenId,
+  searchHelpers.findWithId,
+  RequestApiLol.requestAllMatchFor3MounthsWithDataUser,
+  RequestApiLol.requestManyMatchsInfo,
+  DataSave.saveUpdateDataUser,
+  FilterForQuery.optionForLolHistory,
+  DataMatchReturnControllers.twentyFilteredMatchLol
+);
 
-module.exports = userDataRouter
+userDataRouter.post(
+  "/lol/matchSummary",
+  TokenHelpers.verifyTokenId,
+  DataControllers.lolMatchSummary
+);
+
+module.exports = userDataRouter;
