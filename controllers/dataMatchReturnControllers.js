@@ -65,6 +65,21 @@ const DataMatchReturnControllers = {
         });
       });
   },
+
+  async dataForDashboard(req, res, next) {
+    GameLolModel.find(req.optionQuery)
+      .sort({ "info.gameStartTimestamp": -1 })
+      .then((result) => {
+        req.dataForReturn = result;
+        next();
+      })
+      .catch((err) => {
+        return res.status(400).send({
+          success: false,
+          message: "Erreur data dashboard",
+        });
+      });
+  },
 };
 
 module.exports = DataMatchReturnControllers;

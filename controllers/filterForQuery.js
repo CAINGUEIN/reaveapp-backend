@@ -1,3 +1,5 @@
+const dayjs = require("dayjs");
+
 const FilterForQuery = {
   optionForLolHistory(req, res, next) {
     let option = {
@@ -16,10 +18,10 @@ const FilterForQuery = {
       option.players.$elemMatch["statTotal.lane"] = req.body.lane;
     }
     if (req.body.mapId !== undefined) {
-      option["mapId"] = req.body.mapId;
+      option["info.mapId"] = req.body.mapId;
     }
     if (req.body.item !== undefined) {
-      let item = parseInt(req.body.item)
+      let item = parseInt(req.body.item);
       option.players.$elemMatch["$or"] = [
         { "statTotal.item0": item },
         { "statTotal.item1": item },
@@ -34,6 +36,22 @@ const FilterForQuery = {
       option["players.statTotal.summonerName"] = req.body.summonerName;
     }
     req.optionQuery = option;
+    next();
+  },
+
+  optionForLolDashboard(req, res, next) {
+    //pour les x mois
+    let timestamp = Date.now();
+    let timeSubtract30days = dayjs(timestamp).subtract(30, "day").unix();
+    let timeForOption = parseFloat(timeSubtract30days + "000") 
+    let option = {
+      players: {
+        $elemMatch: { _id_user: req.decodedToken._id },
+      },
+      "info.gameStartTimestamp": { $gt: timeForOption },
+    };
+    req.optionQuery = option;
+    console.log(option);
     next();
   },
 };

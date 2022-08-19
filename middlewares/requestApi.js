@@ -53,11 +53,11 @@ const RequestApiLol = {
   /**
    *
    */
-  async requestAllMatchFor3MounthsWithDataUser(req, res, next) {
-    //pour les 3 mois
+  async requestAllMatchFor1MounthsWithDataUser(req, res, next) {
+    //pour les x mois
     let timestamp = Date.now();
-    let timeSubtract3Mounth = dayjs(timestamp).subtract(1, "month").unix();
-    //pour la boucle en cas de plus de 100 match sur 3 mois
+    let timeSubtract1Mounth = dayjs(timestamp).subtract(1, "month").unix();
+    //pour la boucle en cas de plus de 100 match sur x mois
     let shouldContinue = true;
     let start = 0;
     //array des match sur 3 mois
@@ -67,7 +67,7 @@ const RequestApiLol = {
     do {
       let result = await ServicesApiLol.matchsListWithQuery(
         puuid,
-        timeSubtract3Mounth,
+        timeSubtract1Mounth,
         start
       );
       if (result.status === 200) {
@@ -137,7 +137,14 @@ const RequestApiLol = {
         ListMatchsForRequest[index]
       );
       if (result.status === 200) {
-        console.log("dans la 200", result.status);
+        console.log(
+          "dans le request many match ",
+          index + 1,
+          " sur ",
+          ListMatchsForRequest.length,
+          " result ",
+          result.status
+        );
         // création du array pour le push dans la DB
         let data = DataFormateHelper.infoLolMatch(
           req.decodedToken._id,
