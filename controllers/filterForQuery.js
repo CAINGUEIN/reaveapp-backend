@@ -11,8 +11,9 @@ const FilterForQuery = {
       option.players.$elemMatch["statTotal.win"] = req.body.win;
     }
     if (req.body.championName !== undefined) {
-      option.players.$elemMatch["statTotal.championName"] =
-        req.body.championName;
+      option.players.$elemMatch["statTotal.championName"] = {
+        $in: req.body.championName,
+      };
     }
     if (req.body.lane !== undefined) {
       option.players.$elemMatch["statTotal.lane"] = req.body.lane;
@@ -21,19 +22,22 @@ const FilterForQuery = {
       option["info.mapId"] = req.body.mapId;
     }
     if (req.body.item !== undefined) {
-      let item = parseInt(req.body.item);
+      let item = []
+      for (let index = 0; index < req.body.item.length; index++) {
+        item.push(parseInt(req.body.item[index].key)) ;
+      }
       option.players.$elemMatch["$or"] = [
-        { "statTotal.item0": item },
-        { "statTotal.item1": item },
-        { "statTotal.item2": item },
-        { "statTotal.item3": item },
-        { "statTotal.item4": item },
-        { "statTotal.item5": item },
-        { "statTotal.item6": item },
+        { "statTotal.item0": { $in: item } },
+        { "statTotal.item1": { $in: item } },
+        { "statTotal.item2": { $in: item } },
+        { "statTotal.item3": { $in: item } },
+        { "statTotal.item4": { $in: item } },
+        { "statTotal.item5": { $in: item } },
+        { "statTotal.item6": { $in: item } },
       ];
     }
     if (req.body.summonerName !== undefined) {
-      option["players.statTotal.summonerName"] = req.body.summonerName;
+      option["players.statTotal.summonerName"] = { $in: req.body.summonerName};
     }
     req.optionQuery = option;
     next();
@@ -43,7 +47,7 @@ const FilterForQuery = {
     //pour les x mois
     let timestamp = Date.now();
     let timeSubtract30days = dayjs(timestamp).subtract(30, "day").unix();
-    let timeForOption = parseFloat(timeSubtract30days + "000") 
+    let timeForOption = parseFloat(timeSubtract30days + "000");
     let option = {
       players: {
         $elemMatch: { _id_user: req.decodedToken._id },
