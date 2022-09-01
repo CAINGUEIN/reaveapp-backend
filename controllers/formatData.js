@@ -12,9 +12,17 @@ const FormatData = {
           dataPush["champion"] = player.statTotal.championName;
           dataPush["KDA"] =
             Math.round(player.statTotal.challenges.kda * 100) / 100;
+          dataPush["goldEarned"] = player.statTotal.goldEarned;
+          dataPush["visionScorePerMinute"] =
+            Math.round(player.statTotal.challenges.visionScorePerMinute * 100) /
+            100;
+          dataPush["visionScoreAdvantageLaneOpponent"] =
+            Math.round(
+              player.statTotal.challenges.visionScoreAdvantageLaneOpponent * 100
+            ) / 100;
         }
       }
-      dataFormated.push(dataPush)
+      dataFormated.push(dataPush);
     }
     console.log(dataFormated);
     return res.status(200).send({
