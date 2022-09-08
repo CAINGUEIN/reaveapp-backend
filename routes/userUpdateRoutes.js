@@ -8,6 +8,12 @@ const RequestApiLol = require("../middlewares/requestApi");
 const searchHelpers = require("../middlewares/searchHelpers");
 const DataCheck = require("../middlewares/dataCheck");
 const DataMatchReturnControllers = require("../controllers/dataMatchReturnControllers");
+const MediaSave = require("../middlewares/mediaSave");
+
+//multer
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const uploads = multer({storage}) 
 
 userUpdateRouter.put(
   "/email",
@@ -37,5 +43,17 @@ userUpdateRouter.put(
   //ici les 20 dernier match
   DataMatchReturnControllers.twentyMatchLol,
 );
+
+userUpdateRouter.post(
+  "/img/avatar",
+  TokenHelpers.verifyTokenId,
+  //m multer
+  //recup l'image
+  uploads.single('img'),
+  //transforme l'image en toute les tailles
+  MediaSave.imgResize,
+  //si tout ok renvoie ok
+  MediaSave.imgSave
+)
 
 module.exports = userUpdateRouter;

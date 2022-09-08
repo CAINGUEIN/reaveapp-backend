@@ -26,6 +26,11 @@ const bodyParser = require("body-parser");
 //module mongoose
 require("./plugin/mongoose/mongoose");
 
+//module multer
+const multer = require('multer')
+//module sharp
+const sharp = require('sharp')
+
 //ajout des modules dans l'app
 app.use(cors());
 app.use(bodyParser.json());
