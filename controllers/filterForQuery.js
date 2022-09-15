@@ -24,7 +24,7 @@ const FilterForQuery = {
     if (req.body.item !== undefined) {
       let item = []
       for (let index = 0; index < req.body.item.length; index++) {
-        item.push(parseInt(req.body.item[index].key)) ;
+        item.push(parseInt(req.body.item[index])) ;
       }
       option.players.$elemMatch["$or"] = [
         { "statTotal.item0": { $in: item } },
