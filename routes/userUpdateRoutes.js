@@ -51,9 +51,31 @@ userUpdateRouter.post(
   //recup l'image
   uploads.single('img'),
   //transforme l'image en toute les tailles
-  MediaSave.imgResize,
-  //si tout ok renvoie ok
-  MediaSave.imgSave
+  MediaSave.imgResizeAvatar
+)
+
+userUpdateRouter.post(
+  "/img/banner",
+  TokenHelpers.verifyTokenId,
+  //m multer
+  //recup l'image
+  uploads.single('img'),
+  //transforme l'image en toute les tailles
+  MediaSave.imgResizeBanner
+)
+
+userUpdateRouter.post(
+  "/identity",
+  TokenHelpers.verifyTokenId,
+  //m multer
+  userControllers.updateUserIdentity
+)
+
+userUpdateRouter.post(
+  "/description",
+  TokenHelpers.verifyTokenId,
+  //m multer
+  userControllers.updateUserDescription
 )
 
 module.exports = userUpdateRouter;

@@ -47,12 +47,13 @@ const userControllers = {
   },
 
   updateUser(req, res) {
+    let update = req.body
     UserModel.findByIdAndUpdate(
       req.decodedToken._id,
       {
         //list des chose a changer pour cette route
-        userName: req.body.userName,
-        email: req.body.email,
+        profileName: update.profileName,
+        email: update.email
       },
       { new: true, runValidators: true }
     )
@@ -65,6 +66,54 @@ const userControllers = {
         res.status(400).send({ success: false, message: "Erreur update user" });
       });
   },
+
+  updateUserIdentity(req, res) {
+    let update = req.body
+    UserModel.findByIdAndUpdate(
+      req.decodedToken._id,
+      {
+        //list des chose a changer pour cette route
+        userTag: update.userTag,
+        profileName: update.profileName,
+        firstName: update.firstName,
+        lastName: update.lastName,
+      },
+      { new: true, runValidators: true }
+    )
+      .then((user) => {
+        res
+          .status(200)
+          .send({ success: true, message: "Ok update user", data: user });
+      })
+      .catch((err) => {
+        res.status(400).send({ success: false, message: "Erreur update user" });
+      });
+  },
+
+  updateUserDescription(req, res) {
+    let update = req.body
+    UserModel.findByIdAndUpdate(
+      req.decodedToken._id,
+      {
+        //list des chose a changer pour cette route
+        status: update.status,
+        bio: update.bio,
+        birthDate: update.birthDate,
+        location: update.location,
+        link: update.link,
+      },
+      { new: true, runValidators: true }
+    )
+      .then((user) => {
+        res
+          .status(200)
+          .send({ success: true, message: "Ok update user", data: user });
+      })
+      .catch((err) => {
+        res.status(400).send({ success: false, message: "Erreur update user" });
+      });
+  },
+
   updateMatchUser(req, res) {
     UserModel.findByIdAndUpdate(
       req.decodedToken._id,

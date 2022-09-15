@@ -4,18 +4,28 @@ const mongoose = require("mongoose");
 
 const userSchema = mongoose.Schema(
   {
-    userName: {
+    userTag: {
       type: String,
       require: true,
       minLength: 3,
       maxLength: 38,
       unique: true,
     },
-    profileTag: {
+    profileName: {
       type: String,
       minLength: 3,
       maxLength: 38,
       unique: true,
+    },
+    firstName: {
+      type: String,
+      minLength: 2,
+      maxLength: 38,
+    },
+    lastName: {
+      type: String,
+      minLength: 2,
+      maxLength: 38,
     },
     email: {
       type: String,
@@ -29,7 +39,7 @@ const userSchema = mongoose.Schema(
       require: true,
       select: false,
     }, //String Hasher
-    birthDay: {
+    birthDate: {
       type: String,
     },
     newsLetter: {
@@ -75,13 +85,27 @@ const userSchema = mongoose.Schema(
         ref: "space",
       },
     ],
-    picture: {
-      type: String,
-      default: "",
+    location: {
+      country: { type: String, maxLength: 60 },
+      pc: { type: Number, maxLength: 10 },
+      city: { type: String, maxLength: 60 },
+    },
+    link: {
+      type: String
     },
     bio: {
       type: String,
       maxLength: 158,
+    },
+    status: {
+      type: String,
+      maxLength: 38,
+      default: "none",
+    },
+    connectionStatus: {
+      type: String,
+      maxLength: 38,
+      default: "online",
     },
     followers: [
       {

@@ -11,7 +11,7 @@ authRouter.post(
   CreateUserValidateData.hashPassword,
   BdHelpers.ifExist({
     bd: "user",
-    target: "userName",
+    target: "userTag",
   }),
   BdHelpers.ifExist({
     bd: "user",
