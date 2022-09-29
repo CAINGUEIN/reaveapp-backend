@@ -10,7 +10,7 @@ const SpaceControllers = require("../controllers/spacesControllers");
 spaceRouter.post(
   "/checkSpace",
   TokenHelpers.verifyTokenId,
-  SpaceControllers.checkSpace
+  SpaceControllers.infoAllSpaceForUser
 );
 spaceRouter.post(
   "/allRooms",

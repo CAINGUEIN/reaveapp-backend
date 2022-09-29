@@ -65,6 +65,16 @@ userUpdateRouter.post(
 )
 
 userUpdateRouter.post(
+  "/img/profileFriend",
+  TokenHelpers.verifyTokenId,
+  //m multer
+  //recup l'image
+  uploads.single('img'),
+  //transforme l'image en toute les tailles
+  MediaSave.imgResizeProfileFriend
+)
+
+userUpdateRouter.post(
   "/identity",
   TokenHelpers.verifyTokenId,
   //m multer

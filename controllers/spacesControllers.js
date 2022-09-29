@@ -11,7 +11,6 @@ const SpaceControllers = {
     let createValues = {
       typeOfSpace: req.body.type,
       nameSpace: req.body.profile,
-      bio: req.body.bio,
       dataOfSpace: {
         users: {
           _id_user: req.decodedToken._id,
@@ -44,7 +43,10 @@ const SpaceControllers = {
             return res.status(200).send({
               success: true,
               message: "create space ok",
-              data: { resultSpace, resultUser },
+              data: {
+                newSpace: resultSpace,
+                updateSpaceUser: resultUser.spaces,
+              },
             });
           })
           .catch((err) => {
@@ -134,6 +136,30 @@ const SpaceControllers = {
     //recup tout les users dans le data of space
     //effacé dans la liste des users recup le space
     //puis effacer le space
+  },
+  async infoAllSpaceForUser(req, res) {
+    SpaceModel.find({
+      "dataOfSpace.users._id_user": req.decodedToken._id,
+    })
+      .populate("dataOfSpace.users._id_user", "userTag profileName")
+      .exec((err, space) => {
+        if (err)
+          return res.status(400).send({
+            success: false,
+            message: "Erreur data space",
+          });
+        if (space === null) {
+          return res.status(400).send({
+            success: false,
+            message: "Erreur space delete",
+          });
+        }
+        return res.status(200).send({
+          success: true,
+          message: "Ok data space",
+          data: space,
+        });
+      });
   },
   async checkSpace(req, res) {
     SpaceModel.findById(req.body._id)

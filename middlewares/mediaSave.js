@@ -4,7 +4,8 @@ const AWS = require("aws-sdk");
 const s3 = new AWS.S3({
   accessKeyId: "Back-end",
   secretAccessKey: "Back-end",
-  endpoint: "http://172.16.20.200:9000/",
+  /* endpoint: "http://172.16.20.200:9000/", */
+  endpoint: "https://media.reave.dev",
   s3ForcePathStyle: true, // needed with minio?
   signatureVersion: "v4",
 });
@@ -20,26 +21,28 @@ const MediaSave = {
           width: resize[index],
           height: resize[index],
         })
+        .toFormat("png")
+        .png({ force: true })
         .toBuffer();
-      console.log(img);
       var params = {
         Bucket: "useravatar",
         Key: nameResize[index] + req.file.originalname,
         ContentType: "image/gif",
         Body: img,
       };
-
-      s3.putObject(params, function (err, data) {
-        let key = nameResize[index];
-        let obj = {};
-
-        if (err) {
-          obj[key] = err;
-          success.push(obj);
-        } else {
-          obj[key] = true;
-          success.push(obj);
-        }
+      await new Promise((resolve, reject) => {
+        s3.putObject(params, function (err, data) {
+          let key = nameResize[index];
+          let obj = {};
+          if (err) {
+            obj[key] = err;
+            success.push(obj);
+          } else {
+            obj[key] = true;
+            success.push(obj);
+          }
+          resolve();
+        });
       });
     }
     res.status(200).send({
@@ -60,26 +63,27 @@ const MediaSave = {
           width: resizeW[index],
           height: resizeH[index],
         })
+        .toFormat("png")
+        .png({ force: true })
         .toBuffer();
-      console.log(img);
       var params = {
         Bucket: "userbanner",
         Key: nameResize[index] + req.file.originalname,
         ContentType: "image/gif",
         Body: img,
       };
-
-      s3.putObject(params, function (err, data) {
-        let key = nameResize[index];
-        let obj = {};
-
-        if (err) {
-          obj[key] = err;
-          success.push(obj);
-        } else {
-          obj[key] = true;
-          success.push(obj);
-        }
+      await new Promise((resolve, reject) => {
+        s3.putObject(params, function (err, data) {
+          let key = nameResize[index];
+          let obj = {};
+          if (err) {
+            obj[key] = err;
+            success.push(obj);
+          } else {
+            obj[key] = true;
+            success.push(obj);
+          }
+        });
       });
     }
     res.status(200).send({
@@ -88,8 +92,47 @@ const MediaSave = {
       data: success,
     });
   },
-  imgSave(req, res, next) {
-    next();
+
+  async imgResizeProfileFriend(req, res, next) {
+    let resize = [60, 50, 36];
+    let nameResize = ["l", "m", "xs"];
+    let success = [];
+    for (let index = 0; index < resize.length; index++) {
+      console.log(nameResize[index] + req.file.originalname);
+      let img = await sharp(req.file.buffer)
+        .resize({
+          width: resize[index],
+          height: resize[index],
+        })
+        .toFormat("png")
+        .png({ force: true })
+        .toBuffer();
+      var params = {
+        Bucket: "profilespace",
+        Key: nameResize[index] + req.file.originalname,
+        ContentType: "image/gif",
+        Body: img,
+      };
+      await new Promise((resolve, reject) => {
+        s3.putObject(params, function (err, data) {
+          let key = nameResize[index];
+          let obj = {};
+          if (err) {
+            obj[key] = err;
+            success.push(obj);
+          } else {
+            obj[key] = true;
+            success.push(obj);
+          }
+          resolve();
+        });
+      });
+    }
+    res.status(200).send({
+      success: true,
+      message: "Ok media profile friend upload",
+      data: success,
+    });
   },
 };
 

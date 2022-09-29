@@ -24,8 +24,7 @@ const userControllers = {
 
   async infoUser(req, res) {
     UserModel.findOne({ _id: req.decodedToken._id })
-      .populate("spaces")
-      .populate("friends", "userName profileTag")
+      .populate("friends", "userTag profileName")
       .exec((err, user) => {
         if (err)
           return res.status(400).send({
@@ -47,13 +46,13 @@ const userControllers = {
   },
 
   updateUser(req, res) {
-    let update = req.body
+    let update = req.body;
     UserModel.findByIdAndUpdate(
       req.decodedToken._id,
       {
         //list des chose a changer pour cette route
         profileName: update.profileName,
-        email: update.email
+        email: update.email,
       },
       { new: true, runValidators: true }
     )
@@ -68,7 +67,7 @@ const userControllers = {
   },
 
   updateUserIdentity(req, res) {
-    let update = req.body
+    let update = req.body;
     UserModel.findByIdAndUpdate(
       req.decodedToken._id,
       {
@@ -91,7 +90,7 @@ const userControllers = {
   },
 
   updateUserDescription(req, res) {
-    let update = req.body
+    let update = req.body;
     UserModel.findByIdAndUpdate(
       req.decodedToken._id,
       {
@@ -128,10 +127,16 @@ const userControllers = {
       .then((user) => {
         res
           .status(200)
-          .send({ success: true, message: "Ok update last match for user", data: user });
+          .send({
+            success: true,
+            message: "Ok update last match for user",
+            data: user,
+          });
       })
       .catch((err) => {
-        res.status(400).send({ success: false, message: "Erreur update last match" });
+        res
+          .status(400)
+          .send({ success: false, message: "Erreur update last match" });
       });
   },
 };
