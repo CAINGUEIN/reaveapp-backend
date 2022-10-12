@@ -1,7 +1,7 @@
 const express = require("express");
 const spaceRouter = express.Router();
 
-const TokenHelpers = require("../middlewares/tokenHelpers");
+const TokenHelpers = require("../coreMiddlewares/tokenHelpers");
 const SpaceControllers = require("../controllers/spacesControllers");
 
 //TODO: prevoir un middleware pour recup et stocker une image

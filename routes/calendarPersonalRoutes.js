@@ -1,7 +1,7 @@
 const express = require("express");
 const calendarPersonalRouter = express.Router();
 
-const TokenHelpers = require("../middlewares/tokenHelpers");
+const TokenHelpers = require("../coreMiddlewares/tokenHelpers");
 const personalCalendarControllers = require("../controllers/personalCalendarControllers")
 
 calendarPersonalRouter.post("/create", TokenHelpers.verifyTokenId, personalCalendarControllers.createEvent);

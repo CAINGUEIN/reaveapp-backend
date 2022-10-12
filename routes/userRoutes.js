@@ -1,7 +1,7 @@
 const express = require("express");
 const userRouter = express.Router();
 
-const TokenHelpers = require("../middlewares/tokenHelpers");
+const TokenHelpers = require("../coreMiddlewares/tokenHelpers");
 const userControllers = require("../controllers/userControllers");
 const FriendControllers = require("../controllers/friendsControllers");
 

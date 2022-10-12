@@ -1,7 +1,7 @@
 const express = require("express");
 const userUpdateRouter = express.Router();
 
-const TokenHelpers = require("../middlewares/tokenHelpers");
+const TokenHelpers = require("../coreMiddlewares/tokenHelpers");
 const userControllers = require("../controllers/userControllers");
 const DataSave = require("../middlewares/dataSave");
 const RequestApiLol = require("../middlewares/requestApi");

@@ -8,7 +8,7 @@ const FormatData = require("../controllers/formatData");
 const DataSave = require("../middlewares/dataSave");
 const RequestApiLol = require("../middlewares/requestApi");
 const searchHelpers = require("../middlewares/searchHelpers");
-const TokenHelpers = require("../middlewares/tokenHelpers");
+const TokenHelpers = require("../coreMiddlewares/tokenHelpers");
 
 userDataRouter.post(
   "/lol/lastMatchList",

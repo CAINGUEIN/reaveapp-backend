@@ -1,27 +1,18 @@
 const express = require("express");
 const authRouter = express.Router();
 
-const CreateUserValidateData = require("../middlewares/validatorSignup");
-const BdHelpers = require("../middlewares/bdHelpers");
-const AuthControllers = require("../controllers/authControllers");
+const authValidator = require("../auth/authValidator");
+const AuthControllers = require("../auth/authControllers");
 
 authRouter.post(
   "/register",
-  //CreateUserValidateData.signup,
-  CreateUserValidateData.hashPassword,
-  BdHelpers.ifExist({
-    bd: "user",
-    target: "userTag",
-  }),
-  BdHelpers.ifExist({
-    bd: "user",
-    target: "email",
-  }),
+  authValidator.signup,
+  authValidator.hashPassword,
   AuthControllers.createAccount,
   AuthControllers.login
 );
 
-authRouter.post("/login", /* CreateUserValidateData.login, */ AuthControllers.login);
+authRouter.post("/login", AuthControllers.login);
 
 authRouter.get("/logout", (req, res) => {
   res.send({ success: true, message: "Déconnection" });
