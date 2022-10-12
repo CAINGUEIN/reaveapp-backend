@@ -4,7 +4,7 @@ const riotServices = require("./riotServices");
 exports.riotCheck = async () => {
   let MAJ = "";
   let interval = 6000000;
-  console.log("bonjour");
+  console.log("Lancement Riot version check");
   const result = await ModelVersion.find()
   if (result.length === 0) {
     let version = await checkVersionFromRiot("");
@@ -67,7 +67,6 @@ async function createNewVersion(MAJ) {
   ];
   let data = await createData(target, MAJ);
   data.version = MAJ ;
-  console.log(data, "ici");
   console.log("create new version");
   ModelVersion.create(data);
 }
