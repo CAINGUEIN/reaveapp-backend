@@ -18,7 +18,8 @@ const AuthControllers = {
         console.log("pas cool", err);
         return res.status(400).send({
           success: false,
-          errors: { email: "deja utilisé", name: "deja utilisé" },
+          data: err,
+          errors: { email: "error", name: "error" },
         });
       });
   },
