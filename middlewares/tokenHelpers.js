@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const JWT_KEY = process.env.JWT_SECRET;
-const tools = require("../tools/functionHelpToken");
+const tools = require("../functionHelper/functionHelpToken");
 
 const TokenHelpers = {
   verifyTokenId(req, res, next) {

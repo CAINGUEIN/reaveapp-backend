@@ -1,5 +1,5 @@
 const UserModel = require("../models/user");
-const functionBd = require("../tools/functionHelpBD");
+const functionBd = require("../functionHelper/functionHelpBD");
 
 const BdHelpers = {
   ifExist(params) {
