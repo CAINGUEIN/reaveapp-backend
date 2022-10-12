@@ -1,6 +1,6 @@
-const UserModel = require("../models/user");
+const UserModel = require("../../models/user");
 
-const FriendControllers = {
+const friends = {
   //TODO: penser a faire la notification
   addFriend(req, res) {
     console.log(req.body);
@@ -162,4 +162,4 @@ const FriendControllers = {
   },
 };
 
-module.exports = FriendControllers;
+module.exports = friends;

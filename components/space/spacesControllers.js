@@ -1,7 +1,5 @@
-const SpaceModel = require("../models/space");
-const UserModel = require("../models/user");
-
-const mongoose = require("mongoose");
+const SpaceModel = require("../../models/space");
+const UserModel = require("../../models/user");
 
 //TODO: si trop de bug voir a faire des transaction
 

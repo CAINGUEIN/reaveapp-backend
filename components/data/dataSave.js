@@ -1,6 +1,6 @@
-const DataFormateHelper = require("../functionHelper/dataFormate");
-const GameLolModel = require("../models/game");
-const UserModel = require("../models/user");
+const GameLolModel = require("../../models/game");
+const UserModel = require("../../models/user");
+const dataFormat = require("./formatData");
 
 const DataSave = {
   savePuuidAndLastMatchInfo(req, res, next) {
@@ -40,7 +40,7 @@ const DataSave = {
 
   saveMatchLol(req, res, next) {
     //passe par une fonction helper pour formater la data
-    let data = DataFormateHelper.infoLolMatch(
+    let data = dataFormat.infoLolMatch(
       req.decodedToken._id,
       req.resultLastMatchInfoApiLol,
       req.body.lolPuuid

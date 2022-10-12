@@ -4,7 +4,7 @@ const JWT_KEY = process.env.JWT_SECRET;
 
 const bcrypt = require("bcrypt");
 
-const UserModel = require("../models/user");
+const UserModel = require("../../models/user");
 
 const AuthControllers = {
   createAccount(req, res, next) {

@@ -1,7 +1,7 @@
-const ModelVersion = require("../models/LOLVersion/versionJSON");
+const ModelVersion = require("../../models/LOLVersion/versionJSON");
 
-const versionControllers = {
-  lastVersionLolData(req, res, next) {
+const DataVersionLol = {
+  lastVersion(req, res, next) {
     ModelVersion.find()
       .sort({ version: -1 })
       .then((dataVersion) => {
@@ -21,4 +21,4 @@ const versionControllers = {
   },
 };
 
-module.exports = versionControllers;
+module.exports = DataVersionLol;

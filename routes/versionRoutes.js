@@ -1,9 +1,7 @@
 const express = require("express");
-const versionControllers = require("../controllers/versionControllers");
+const VersionLol = require("../components/data/versionLol");
 const versionRouter = express.Router();
 
-const TokenHelpers = require("../coreMiddlewares/tokenHelpers");
-
-versionRouter.get("/last", versionControllers.lastVersionLolData );
+versionRouter.get("/last", VersionLol.lastVersion );
 
 module.exports = versionRouter;

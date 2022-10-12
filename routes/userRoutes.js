@@ -1,9 +1,9 @@
 const express = require("express");
 const userRouter = express.Router();
 
-const TokenHelpers = require("../coreMiddlewares/tokenHelpers");
-const userControllers = require("../controllers/userControllers");
-const FriendControllers = require("../controllers/friendsControllers");
+const TokenHelpers = require("../components/core/tokenHelpers");
+const userControllers = require("../components/users/userControllers");
+const FriendControllers = require("../components/social/friends");
 
 userRouter.get(
   "/checkToken",

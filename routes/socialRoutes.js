@@ -1,8 +1,8 @@
 const express = require("express");
 const socialRouter = express.Router();
 
-const TokenHelpers = require("../coreMiddlewares/tokenHelpers");
-const followControllers = require("../controllers/followControllers")
+const TokenHelpers = require("../components/core/tokenHelpers");
+const followControllers = require("../components/social/follow")
 
 socialRouter.post("/following", TokenHelpers.verifyTokenId, followControllers.follow);
 

@@ -1,4 +1,4 @@
-const UserModel = require("../models/user");
+const UserModel = require("../../models/user");
 
 const userControllers = {
   deleteUser(req, res) {

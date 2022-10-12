@@ -1,14 +1,14 @@
 const express = require("express");
 const userUpdateRouter = express.Router();
 
-const TokenHelpers = require("../coreMiddlewares/tokenHelpers");
-const userControllers = require("../controllers/userControllers");
-const DataSave = require("../middlewares/dataSave");
-const RequestApiLol = require("../middlewares/requestApi");
-const searchHelpers = require("../middlewares/searchHelpers");
-const DataCheck = require("../middlewares/dataCheck");
-const DataMatchReturnControllers = require("../controllers/dataMatchReturnControllers");
-const MediaSave = require("../middlewares/mediaSave");
+const TokenHelpers = require("../components/core/tokenHelpers");
+const userControllers = require("../components/users/userControllers");
+const DataSave = require("../components/data/dataSave");
+const RequestApiLol = require("../components/api/requestApi");
+const searchHelpers = require("../components/core/searchHelpers");
+const DataCheck = require("../components/data/dataCheck");
+const MediaSave = require("../components/media/mediaSave");
+const DataReturnLol = require("../components/data/dataReturnLol");
 
 //multer
 const multer = require('multer');
@@ -32,7 +32,7 @@ userUpdateRouter.put(
   RequestApiLol.requestMatchsListWithDataUser, // dans req.resultListMatchsApiLol
   //verifier si il existe deja des match enregistré par d'autre user pour ce user
   //faire 2 Array un oui et l'autre non
-  DataCheck.lolMatch, // dans req.listMatchExist req.listMatchNoExist
+  DataReturnLol.lolMatch, // dans req.listMatchExist req.listMatchNoExist
   //si non recup les matchs comme avec requestManyMatchsInfo
   RequestApiLol.requestManyMatchsInfo,
   //si oui ajouter le user dans les data du match et le match dans les data du user
@@ -41,7 +41,7 @@ userUpdateRouter.put(
   DataSave.saveUpdateDataUser,
   //mise en place d'une fin de route dite controllers qui va faire le retour d'info
   //ici les 20 dernier match
-  DataMatchReturnControllers.twentyMatchLol,
+  DataReturnLol.multiMatch
 );
 
 userUpdateRouter.post(

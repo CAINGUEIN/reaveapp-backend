@@ -1,7 +1,7 @@
-const DataFormateHelper = require("../functionHelper/dataFormate");
-const GameLolModel = require("../models/game");
-const ServicesApiLol = require("../plugin/axios/servicesApiLol");
+const GameLolModel = require("../../models/game");
+const ServicesApiLol = require("../../plugin/axios/servicesApiLol");
 const dayjs = require("dayjs");
+const dataFormat = require("../data/formatData");
 
 //TODO: voir a faire un system pour evité de requete trop l'api
 
@@ -123,7 +123,7 @@ const RequestApiLol = {
     if (req.listMatchNoExist) {
       ListMatchsForRequest = req.listMatchNoExist;
     } else {
-      ListMatchsForRequest = DataFormateHelper.listMatchForRequest(
+      ListMatchsForRequest = dataFormat.listMatchForRequest(
         req.resultListMatchsApiLol,
         req.dataUser.lolData.lolMatchs
       );
@@ -146,7 +146,7 @@ const RequestApiLol = {
           result.status
         );
         // création du array pour le push dans la DB
-        let data = DataFormateHelper.infoLolMatch(
+        let data = dataFormat.infoLolMatch(
           req.decodedToken._id,
           result.data,
           req.dataUser.lolData.lolPuuid

@@ -1,9 +1,9 @@
 const express = require("express");
 const SearchRouter = express.Router();
 
-const TokenHelpers = require("../coreMiddlewares/tokenHelpers");
-const searchControllers = require("../controllers/searchControllers");
-const searchHelpers = require("../middlewares/searchHelpers");
+const TokenHelpers = require("../components/core/tokenHelpers");
+const searchControllers = require("../components/social/searchUsers");
+const searchHelpers = require("../components/core/searchHelpers");
 
 SearchRouter.post(
   "/users",

@@ -1,6 +1,3 @@
-const UserModel = require("../models/user");
-const mongoose = require("mongoose");
-
 const searchControllers = {
   //ici une suite de services pour faire des recherche
   async usersList(req, res) {

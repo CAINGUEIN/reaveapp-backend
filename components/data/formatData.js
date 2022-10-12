@@ -1,4 +1,36 @@
-const DataFormateHelper = {
+const dataFormat = {
+  dashboard(req, res, next) {
+    let data = req.dataForReturn;
+    let dataFormated = [];
+    for (let index = 0; index < data.length; index++) {
+      let dataPush = {};
+      const match = data[index];
+      dataPush["start"] = match.info.gameStartTimestamp;
+      for (let index = 0; index < match.players.length; index++) {
+        const player = match.players[index];
+        if (player.puuid === req.dataUser.lolData.lolPuuid) {
+          dataPush["champion"] = player.statTotal.championName;
+          dataPush["KDA"] =
+            Math.round(player.statTotal.challenges.kda * 100) / 100;
+          dataPush["goldEarned"] = player.statTotal.goldEarned;
+          dataPush["visionScorePerMinute"] =
+            Math.round(player.statTotal.challenges.visionScorePerMinute * 100) /
+            100;
+          dataPush["visionScoreAdvantageLaneOpponent"] =
+            Math.round(
+              player.statTotal.challenges.visionScoreAdvantageLaneOpponent * 100
+            ) / 100;
+        }
+      }
+      dataFormated.push(dataPush);
+    }
+    console.log(dataFormated);
+    return res.status(200).send({
+      success: true,
+      message: "Ok twenty filtered match lol",
+      data: dataFormated,
+    });
+  },
   infoLolMatch(_id, infoLolMatch, puuid) {
     //ici va faloire créer 10 data une par key
     let players = [];
@@ -43,7 +75,7 @@ const DataFormateHelper = {
     let ListMatchsForRequest = [];
     listMatchs.map((match) => {
       let found = matchsUser.find((matchUser) => {
-        if (match === matchUser._id_riot) return true
+        if (match === matchUser._id_riot) return true;
       });
       if (found) {
         console.log("match find");
@@ -52,8 +84,7 @@ const DataFormateHelper = {
         ListMatchsForRequest.push(match);
       }
     });
-    return ListMatchsForRequest
-  }
+    return ListMatchsForRequest;
+  },
 };
-
-module.exports = DataFormateHelper;
+module.exports = dataFormat;

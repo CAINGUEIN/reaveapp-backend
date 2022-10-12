@@ -1,4 +1,4 @@
-const UserModel = require("../models/user");
+const UserModel = require("../../models/user");
 
 const searchHelpers = {
   //ici une suite de services pour faire des recherche

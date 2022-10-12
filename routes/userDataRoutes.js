@@ -1,14 +1,14 @@
 const express = require("express");
-const DataControllers = require("../controllers/dataControllers");
 const userDataRouter = express.Router();
 
-const DataMatchReturnControllers = require("../controllers/dataMatchReturnControllers");
-const FilterForQuery = require("../controllers/filterForQuery");
-const FormatData = require("../controllers/formatData");
-const DataSave = require("../middlewares/dataSave");
-const RequestApiLol = require("../middlewares/requestApi");
-const searchHelpers = require("../middlewares/searchHelpers");
-const TokenHelpers = require("../coreMiddlewares/tokenHelpers");
+
+const DataReturnLol = require("../components/data/dataReturnLol");
+const FilterForQuery = require("../components/data/filterForQuery");
+const FormatData = require("../components/data/formatData");
+const DataSave = require("../components/data/dataSave");
+const RequestApiLol = require("../components/api/requestApi");
+const searchHelpers = require("../components/core/searchHelpers");
+const TokenHelpers = require("../components/core/tokenHelpers");
 
 userDataRouter.post(
   "/lol/lastMatchList",
@@ -18,7 +18,7 @@ userDataRouter.post(
   RequestApiLol.requestManyMatchsInfo,
   DataSave.saveUpdateDataUser,
   FilterForQuery.optionForLolHistory,
-  DataMatchReturnControllers.twentyMatchLol
+  DataReturnLol.multiFilteredMatch
 );
 
 userDataRouter.post(
@@ -29,13 +29,13 @@ userDataRouter.post(
   RequestApiLol.requestManyMatchsInfo,
   DataSave.saveUpdateDataUser,
   FilterForQuery.optionForLolHistory,
-  DataMatchReturnControllers.twentyFilteredMatchLol
+  DataReturnLol.multiFilteredMatch
 );
 
 userDataRouter.post(
   "/lol/matchSummary",
   TokenHelpers.verifyTokenId,
-  DataControllers.lolMatchSummary
+  DataReturnLol.oneMatch
 );
 
 userDataRouter.post(
@@ -43,8 +43,7 @@ userDataRouter.post(
   TokenHelpers.verifyTokenId,
   searchHelpers.findWithId,
   FilterForQuery.optionForLolDashboard,
-  DataMatchReturnControllers.dataForDashboard,
-  //TODO: penser a renomer et range tout les M et C
+  DataReturnLol.forDashboard,
   FormatData.dashboard
 );
 

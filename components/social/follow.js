@@ -1,6 +1,6 @@
-const UserModel = require("../models/user");
+const UserModel = require("../../models/user");
 
-const followControllers = {
+const follow = {
   //TODO: penser a faire la notification
   follow(req, res) {
     UserModel.findByIdAndUpdate(
@@ -75,4 +75,4 @@ const followControllers = {
   },
 };
 
-module.exports = followControllers;
+module.exports = follow;
