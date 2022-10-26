@@ -77,15 +77,26 @@ userUpdateRouter.post(
 userUpdateRouter.post(
   "/identity",
   TokenHelpers.verifyTokenId,
-  //m multer
   userControllers.updateUserIdentity
 )
 
 userUpdateRouter.post(
   "/description",
   TokenHelpers.verifyTokenId,
-  //m multer
   userControllers.updateUserDescription
 )
 
+userUpdateRouter.post(
+  "/coinBalance",
+  TokenHelpers.verifyTokenId,
+  userControllers.updateUserCoinBalance
+)
+
+userUpdateRouter.post(
+  "/contactPro",
+  TokenHelpers.verifyTokenId,
+  //pour le moment juste true dans pro
+  userControllers.updateUserTruePro
+  //dans le body.email l'email de contact
+)
 module.exports = userUpdateRouter;

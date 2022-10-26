@@ -42,6 +42,21 @@ const userSchema = mongoose.Schema(
     birthDate: {
       type: String,
     },
+    coin: {
+      type: Number,
+      default: 0,
+    },
+    pro: {
+      type: Boolean,
+      default: false
+    },
+    historiesCoin: [
+      {
+        type: { type: String },
+        value: { type: Number, default: 0 },
+        date: { type: Date, default: Date.now },
+      },
+    ],
     newsLetter: {
       type: Boolean,
     },
@@ -91,7 +106,7 @@ const userSchema = mongoose.Schema(
       city: { type: String, maxLength: 60 },
     },
     link: {
-      type: String
+      type: String,
     },
     bio: {
       type: String,

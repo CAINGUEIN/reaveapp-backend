@@ -113,6 +113,47 @@ const userControllers = {
       });
   },
 
+  updateUserCoinBalance(req, res) {
+    let update = req.body;
+    UserModel.findByIdAndUpdate(
+      req.decodedToken._id,
+      {
+        $inc:
+          //list des chose a changer pour cette route
+          { coin: update.coin },
+        $addToSet: { historiesCoin: { type: "coin", value: update.coin } },
+      },
+      { new: true, runValidators: true }
+    )
+      .then((user) => {
+        res
+          .status(200)
+          .send({ success: true, message: "Ok update user", data: user });
+      })
+      .catch((err) => {
+        res.status(400).send({ success: false, message: "Erreur update Coin" });
+      });
+  },
+
+  updateUserTruePro(req, res) {
+    let update = req.body;
+    UserModel.findByIdAndUpdate(
+      req.decodedToken._id,
+      {
+         pro: true
+      },
+      { new: true, runValidators: true }
+    )
+      .then((user) => {
+        res
+          .status(200)
+          .send({ success: true, message: "Ok update user", data: user });
+      })
+      .catch((err) => {
+        res.status(400).send({ success: false, message: "Erreur update pro" });
+      });
+  },
+
   updateMatchUser(req, res) {
     UserModel.findByIdAndUpdate(
       req.decodedToken._id,
@@ -125,13 +166,11 @@ const userControllers = {
       { new: true, runValidators: true }
     )
       .then((user) => {
-        res
-          .status(200)
-          .send({
-            success: true,
-            message: "Ok update last match for user",
-            data: user,
-          });
+        res.status(200).send({
+          success: true,
+          message: "Ok update last match for user",
+          data: user,
+        });
       })
       .catch((err) => {
         res
