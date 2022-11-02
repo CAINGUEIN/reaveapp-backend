@@ -10,4 +10,10 @@ eventRouter.post(
   EventControllers.createEvent
 );
 
+eventRouter.post(
+  "/list",
+  TokenHelpers.verifyTokenId,
+  EventControllers.listEvent
+);
+
 module.exports = eventRouter;
