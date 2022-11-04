@@ -11,7 +11,8 @@ const eventSchema = mongoose.Schema(
     },
     owner: {
       type: mongoose.ObjectId,
-      ref: "user",},
+      ref: "user",
+    },
     orga: {
       //par la suite une ID d'orga
       type: String,
@@ -30,7 +31,14 @@ const eventSchema = mongoose.Schema(
     ticket: {
       type: Number,
       require: true,
+      min: [0, 'cannot be negative']
     },
+    soldTicket: [
+      {
+        type: mongoose.ObjectId,
+        ref: "ticket",
+      },
+    ],
     price: {
       type: Number,
       require: true,

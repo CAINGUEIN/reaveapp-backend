@@ -1,3 +1,4 @@
+const EventModel = require("../../models/event");
 const UserModel = require("../../models/user");
 
 const userControllers = {
@@ -135,12 +136,63 @@ const userControllers = {
       });
   },
 
+  debitCoin(req, res, next) {
+    ticket = req.dataEvent;
+    UserModel.findByIdAndUpdate(
+      req.decodedToken._id,
+      {
+        $inc:
+          //list des chose a changer pour cette route
+          { coin: -ticket.price },
+        $addToSet: {
+          historiesCoin: {
+            type: "BuyTicket",
+            value: -ticket.price,
+            name: ticket.name,
+          },
+        },
+      },
+      { new: true, runValidators: true }
+    )
+      .then(next())
+      .catch((err) => {
+        EventModel.findByIdAndUpdate(
+          req.body.event_id,
+          {
+            $inc:
+              //list des chose a changer pour cette route
+              { ticket: 1 },
+          },
+          { new: true, runValidators: true }
+        );
+        res.status(400).send({ success: false, message: "Erreur update Coin" });
+      });
+  },
+
+  addTicket(req, res, next) {
+    UserModel.findByIdAndUpdate(
+      req.decodedToken._id,
+      {
+        $addToSet: { ticket: req.ticket._id },
+      },
+      { new: true, runValidators: true }
+    )
+      .then((user) => {
+        res
+          .status(200)
+          .send({ success: true, message: "Ok ticket add", data: user });
+      })
+      .catch((err) => {
+        res.status(400).send({ success: false, message: "Erreur add ticket" });
+      });
+  },
+
   updateUserTruePro(req, res) {
     let update = req.body;
     UserModel.findByIdAndUpdate(
       req.decodedToken._id,
       {
-         pro: true
+        pro: true,
       },
       { new: true, runValidators: true }
     )

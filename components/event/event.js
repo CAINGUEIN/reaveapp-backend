@@ -62,6 +62,44 @@ const EventControllers = {
         });
       });
   },
+
+  async recupTicket(req, res, next) {
+    EventModel.findByIdAndUpdate(
+      req.body.event_id,
+      {
+        $inc:
+          //list des chose a changer pour cette route
+          { ticket: -1 },
+      },
+      { new: true, runValidators: true }
+    )
+      .then((dataEvent) => {
+        req.dataEvent = dataEvent;
+        next();
+      })
+      .catch((err) => {
+        return res.status(400).send({
+          success: false,
+          message: "Erreur ticket event",
+          errors: err,
+        });
+      });
+  },
+  soldTicket(req, res, next) {
+    EventModel.findByIdAndUpdate(req.body.event_id, {
+      $addToSet: {
+        soldTicket: req.ticket._id,
+      },
+    })
+      .then(next())
+      .catch((err) => {
+        return res.status(400).send({
+          success: false,
+          message: "Erreur ticket sold",
+          errors: err,
+        });
+      });
+  },
 };
 
 module.exports = EventControllers;

@@ -45,10 +45,12 @@ const userSchema = mongoose.Schema(
     coin: {
       type: Number,
       default: 0,
+      min: [0, "credit cannot be negative"],
     },
+    ticket: [{ type: mongoose.ObjectId, ref: "ticket" },],
     pro: {
       type: Boolean,
-      default: false
+      default: false,
     },
     historiesCoin: [
       {
