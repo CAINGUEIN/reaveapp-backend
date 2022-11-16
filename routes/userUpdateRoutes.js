@@ -93,6 +93,12 @@ userUpdateRouter.post(
 )
 
 userUpdateRouter.post(
+  "/sendCoin",
+  TokenHelpers.verifyTokenId,
+  userControllers.updateUserSendCoin
+)
+
+userUpdateRouter.post(
   "/contactPro",
   TokenHelpers.verifyTokenId,
   //pour le moment juste true dans pro

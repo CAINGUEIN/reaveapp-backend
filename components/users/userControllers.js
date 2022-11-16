@@ -119,7 +119,7 @@ const userControllers = {
     UserModel.findByIdAndUpdate(
       req.decodedToken._id,
       {
-        $inc:
+        $dec:
           //list des chose a changer pour cette route
           { coin: update.coin },
         $addToSet: { historiesCoin: { type: "coin", value: update.coin } },
@@ -133,6 +133,59 @@ const userControllers = {
       })
       .catch((err) => {
         res.status(400).send({ success: false, message: "Erreur update Coin" });
+      });
+  },
+
+  updateUserSendCoin(req, res) {
+    let update = req.body;
+    console.log(update);
+    UserModel.findByIdAndUpdate(
+      req.decodedToken._id,
+      {
+        $inc:
+          //list des chose a changer pour cette route
+          { coin: -update.value },
+        $addToSet: {
+          historiesCoin: {
+            type: "sendCoin",
+            message: update.message,
+            value: 0 - update.value,
+          },
+        },
+      },
+      { new: true, runValidators: true }
+    )
+      .then((user) => {
+        console.log("ICI");
+        UserModel.findByIdAndUpdate(
+          update.target._id,
+          {
+            $inc:
+              //list des chose a changer pour cette route
+              { coin: update.value },
+            $addToSet: {
+              historiesCoin: {
+                type: "sendCoin",
+                message: update.message,
+                value: update.value,
+              },
+            },
+          },
+          { new: true, runValidators: true }
+        )
+          .then(
+            res
+              .status(200)
+              .send({ success: true, message: "Ok update user", data: user })
+          )
+          .catch((err) => {
+            res
+              .status(400)
+              .send({ success: false, message: "Erreur receved Coin" });
+          });
+      })
+      .catch((err) => {
+        res.status(400).send({ success: false, message: "Erreur send Coin", data: err });
       });
   },
 
