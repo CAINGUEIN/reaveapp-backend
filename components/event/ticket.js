@@ -17,6 +17,29 @@ const TicketControllers = {
         });
       });
   },
+
+  async infoTicket(req, res) {
+    TicketModel.findById({ _id: req.body._id })
+      .populate("event")
+      .exec((err, user) => {
+        if (err)
+          return res.status(400).send({
+            success: false,
+            message: "Erreur data user",
+          });
+        if (user === null) {
+          return res.status(400).send({
+            success: false,
+            message: "Erreur user delete",
+          });
+        }
+        return res.status(200).send({
+          success: true,
+          message: "Ok data user",
+          data: user,
+        });
+      });
+  },
 };
 
 module.exports = TicketControllers;

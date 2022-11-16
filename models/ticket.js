@@ -9,7 +9,7 @@ const ticketSchema = mongoose.Schema(
     event: {
       type: mongoose.ObjectId,
       ref: "event",
-    },
+    }
   },
   {
     timestamps: true,

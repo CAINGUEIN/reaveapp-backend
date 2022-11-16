@@ -148,7 +148,7 @@ const userControllers = {
           historiesCoin: {
             type: "BuyTicket",
             value: -ticket.price,
-            name: ticket.name,
+            message: "achat d'un ticket pour " + ticket.name,
           },
         },
       },

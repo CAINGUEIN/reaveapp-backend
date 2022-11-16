@@ -2,14 +2,14 @@ const UserModel = require("../../models/user");
 
 const searchHelpers = {
   //ici une suite de services pour faire des recherche
-  async usersNameList(req, res, next) {
+  async usersTagList(req, res, next) {
     UserModel.find({
       // ici un regex
-      userName: { $regex: req.body.userName, $options: "i" },
+      userTag: { $regex: req.body.userTag, $options: "i" },
     })
       .then((list) => {
-        console.log("usersNameList");
-        req.usersNameList = list;
+        console.log("usersTagList");
+        req.usersTagList = list;
         next();
       })
       .catch((err) => {
@@ -20,19 +20,19 @@ const searchHelpers = {
         });
       });
   },
-  async profileTagList(req, res, next) {
+  async profileNameList(req, res, next) {
     UserModel.find({
-      profileTag: { $regex: req.body.profileTag, $options: "i" },
+      profileName: { $regex: req.body.profileName, $options: "i" },
     })
       .then((list) => {
-        console.log("profileTagList");
-        req.profileTagList = list;
+        console.log("profileNameList");
+        req.profileNameList = list;
         next();
       })
       .catch((err) => {
         return res.status(400).send({
           success: false,
-          message: "Erreur profileTag List",
+          message: "Erreur profileName List",
           data: err,
         });
       });

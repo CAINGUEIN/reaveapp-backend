@@ -8,8 +8,8 @@ const searchHelpers = require("../components/core/searchHelpers");
 SearchRouter.post(
   "/users",
   TokenHelpers.verifyTokenId,
-  searchHelpers.usersNameList,
-  searchHelpers.profileTagList,
+  searchHelpers.usersTagList,
+  searchHelpers.profileNameList,
   searchControllers.usersList
 );
 

@@ -100,6 +100,24 @@ const EventControllers = {
         });
       });
   },
+
+  personalOperator(req, res, next) {
+    EventModel.find({ owenr: req.decodedToken._id })
+      .then((result) => {
+        return res.status(200).send({
+          success: true,
+          message: "Ok personalOperator",
+          data: result,
+        });
+      })
+      .catch((err) => {
+        return res.status(400).send({
+          success: false,
+          message: "Erreur personalOperator",
+          errors: err,
+        });
+      });
+  },
 };
 
 module.exports = EventControllers;

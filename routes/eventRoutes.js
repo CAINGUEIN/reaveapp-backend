@@ -33,4 +33,6 @@ eventRouter.post(
   userControllers.addTicket
 );
 
+eventRouter.get("/personalOperator", TokenHelpers.verifyTokenId , EventControllers.personalOperator,);
+
 module.exports = eventRouter;

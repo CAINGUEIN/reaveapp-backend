@@ -20,6 +20,7 @@ const searchRoutes = require("./routes/searchRoutes");
 const versionRouter = require("./routes/versionRoutes.js")
 const userDataRouter = require("./routes/userDataRoutes.js");
 const eventRouter = require("./routes/eventRoutes.js");
+const ticketRouter = require("./routes/ticketRoutes.js");
 
 //extension d'express
 const bodyParser = require("body-parser");
@@ -35,6 +36,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 //ajout des routes dans l'app
 app.use("/calendar/personal", calendarPersonalRoutes);
 app.use("/auth", authRouter);
+app.use("/ticket", ticketRouter);
 app.use("/event", eventRouter);
 app.use("/user/update", userUpdateRouter);
 app.use("/user/data", userDataRouter);

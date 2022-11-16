@@ -46,8 +46,9 @@ const userSchema = mongoose.Schema(
       type: Number,
       default: 0,
       min: [0, "credit cannot be negative"],
+      //TODO: verifier pourquoi ça marche pas le negative validator
     },
-    ticket: [{ type: mongoose.ObjectId, ref: "ticket" },],
+    ticket: [{ type: mongoose.ObjectId, ref: "ticket" }],
     pro: {
       type: Boolean,
       default: false,
@@ -57,6 +58,10 @@ const userSchema = mongoose.Schema(
         type: { type: String },
         value: { type: Number, default: 0 },
         date: { type: Date, default: Date.now },
+        message: {
+          type: String,
+          default: "Pas encore fait",
+        },
       },
     ],
     newsLetter: {
