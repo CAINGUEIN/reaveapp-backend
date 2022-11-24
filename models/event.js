@@ -13,24 +13,25 @@ const eventSchema = mongoose.Schema(
       type: mongoose.ObjectId,
       ref: "user",
     },
+    status: {
+      type: String,
+      require: true,
+    },
     orga: {
       //par la suite une ID d'orga
       type: String,
-      require: true,
       minLength: 3,
       maxLength: 38,
     },
-    date: { type: Date, require: true },
+    date: { type: Date },
     game: {
       //par la suite une ID de game
       type: String,
-      require: true,
       minLength: 3,
       maxLength: 38,
     },
     ticket: {
       type: Number,
-      require: true,
       min: [0, 'cannot be negative']
     },
     soldTicket: [
@@ -41,22 +42,18 @@ const eventSchema = mongoose.Schema(
     ],
     price: {
       type: Number,
-      require: true,
     },
     //quand la salle sera choissisable remplissage auto
     adress: {
       type: String,
-      require: true,
       minLength: 3,
       maxLength: 72,
     },
     cp: {
       type: Number,
-      require: true,
     },
     country: {
       type: String,
-      require: true,
       minLength: 3,
       maxLength: 72,
     },

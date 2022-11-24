@@ -63,6 +63,29 @@ const EventControllers = {
       });
   },
 
+  async dataEvent(req, res) {
+    EventModel.findById(req.body._id)
+      .populate("soldTicket")
+      .exec((err, user) => {
+        if (err)
+          return res.status(400).send({
+            success: false,
+            message: "Erreur data event",
+          });
+        if (user === null) {
+          return res.status(400).send({
+            success: false,
+            message: "Erreur event delete",
+          });
+        }
+        return res.status(200).send({
+          success: true,
+          message: "Ok data event",
+          data: user,
+        });
+      });
+  },
+
   async recupTicket(req, res, next) {
     EventModel.findByIdAndUpdate(
       req.body.event_id,
@@ -102,7 +125,7 @@ const EventControllers = {
   },
 
   personalOperator(req, res, next) {
-    EventModel.find({ owenr: req.decodedToken._id })
+    EventModel.find({ owner: req.decodedToken._id })
       .then((result) => {
         return res.status(200).send({
           success: true,

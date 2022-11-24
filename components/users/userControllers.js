@@ -119,7 +119,7 @@ const userControllers = {
     UserModel.findByIdAndUpdate(
       req.decodedToken._id,
       {
-        $dec:
+        $inc:
           //list des chose a changer pour cette route
           { coin: update.coin },
         $addToSet: { historiesCoin: { type: "coin", value: update.coin } },

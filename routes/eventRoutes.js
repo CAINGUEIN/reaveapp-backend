@@ -19,6 +19,12 @@ eventRouter.post(
 );
 
 eventRouter.post(
+  "/data",
+  TokenHelpers.verifyTokenId,
+  EventControllers.dataEvent
+);
+
+eventRouter.post(
   "/buy",
   TokenHelpers.verifyTokenId,
   //check ticket dispo dans event retrait 1
@@ -33,6 +39,10 @@ eventRouter.post(
   userControllers.addTicket
 );
 
-eventRouter.get("/personalOperator", TokenHelpers.verifyTokenId , EventControllers.personalOperator,);
+eventRouter.get(
+  "/personalOperator",
+  TokenHelpers.verifyTokenId,
+  EventControllers.personalOperator
+);
 
 module.exports = eventRouter;
