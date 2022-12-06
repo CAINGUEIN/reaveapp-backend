@@ -10,16 +10,20 @@ const dataFormat = {
         const player = match.players[index];
         if (player.puuid === req.dataUser.lolData.lolPuuid) {
           dataPush["champion"] = player.statTotal.championName;
-          dataPush["KDA"] =
-            Math.round(player.statTotal.challenges.kda * 100) / 100;
           dataPush["goldEarned"] = player.statTotal.goldEarned;
-          dataPush["visionScorePerMinute"] =
-            Math.round(player.statTotal.challenges.visionScorePerMinute * 100) /
-            100;
-          dataPush["visionScoreAdvantageLaneOpponent"] =
-            Math.round(
-              player.statTotal.challenges.visionScoreAdvantageLaneOpponent * 100
-            ) / 100;
+          if (player.statTotal.challenges) {
+            dataPush["KDA"] =
+              Math.round(player.statTotal.challenges.kda * 100) / 100;
+            dataPush["visionScorePerMinute"] =
+              Math.round(
+                player.statTotal.challenges.visionScorePerMinute * 100
+              ) / 100;
+            dataPush["visionScoreAdvantageLaneOpponent"] =
+              Math.round(
+                player.statTotal.challenges.visionScoreAdvantageLaneOpponent *
+                  100
+              ) / 100;
+          }
         }
       }
       dataFormated.push(dataPush);
