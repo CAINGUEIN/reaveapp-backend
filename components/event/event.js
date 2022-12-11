@@ -276,13 +276,8 @@ const EventControllers = {
     EventModel.findByIdAndUpdate(
       req.body.project_id,
       {
-        $addToSet: {
-          staff: {
-            staff_id: req.decodedToken._id,
-            permission: "Admin",
-          },
-        },
-        "owner.user_id": req.body.staff_id,
+        "owner.role": req.body.role,
+        "owner.team": req.body.team,
       },
       { new: true, runValidators: true }
     )
