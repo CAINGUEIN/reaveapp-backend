@@ -34,7 +34,7 @@ eventRouter.post(
   //check coin et debit
   userControllers.debitCoin,
   //création du ticket id user et id event
-  TicketControllers.createTicket,
+  TicketControllers.generateTicket,
   //dans event push du id ticket
   EventControllers.soldTicket,
   //dans user push du id ticket
@@ -81,5 +81,19 @@ eventRouter.post(
   TokenHelpers.verifyTokenId,
   PermissionsValidate.isAdmin,
   EventControllers.modifyStaffAndSwitchOwner
+);
+
+eventRouter.post(
+  "/createTicketForEvent",
+  TokenHelpers.verifyTokenId,
+  PermissionsValidate.isAdmin,
+  TicketControllers.createTicketForEvent
+);
+
+eventRouter.post(
+  "/removeStaff",
+  TokenHelpers.verifyTokenId,
+  PermissionsValidate.isAdmin,
+  EventControllers.removeStaff
 );
 module.exports = eventRouter;

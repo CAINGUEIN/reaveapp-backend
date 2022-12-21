@@ -29,6 +29,7 @@ const EventControllers = {
     req.optionQuery = {
       date: { $gt: timestamp },
       ticket: { $gt: 0 },
+      isPublished: true
     };
     // recup des 20 prochain
     let perpage = "";
@@ -168,6 +169,9 @@ const EventControllers = {
         price: update.price,
         type: update.type,
         openDate: update.openDate,
+        date: update.date,
+        description: update.description,
+        isPublished: update.isPublished
       },
       { new: true, runValidators: true }
     )
@@ -290,6 +294,30 @@ const EventControllers = {
         return res.status(400).send({
           success: false,
           message: "Erreur add Staff",
+          errors: err,
+        });
+      });
+  },
+
+  removeStaff(req, res) {
+    EventModel.findByIdAndUpdate(
+      req.body.project_id,
+      { $pull: { staff: { _id: req.body.staff_id } } },
+      { new: true, runValidators: true }
+    )
+      .then((event) => {
+        res
+          .status(200)
+          .send({
+            success: true,
+            message: "Ok remove staff event",
+            data: event,
+          });
+      })
+      .catch((err) => {
+        return res.status(400).send({
+          success: false,
+          message: "Erreur remove Staff",
           errors: err,
         });
       });

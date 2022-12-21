@@ -14,12 +14,12 @@ const eventSchema = mongoose.Schema(
         type: mongoose.ObjectId,
         ref: "user",
       },
-      role:{
+      role: {
         type: String,
         minLength: 2,
         maxLength: 38,
       },
-      team:{
+      team: {
         type: String,
         minLength: 2,
         maxLength: 38,
@@ -43,10 +43,35 @@ const eventSchema = mongoose.Schema(
       minLength: 3,
       maxLength: 38,
     },
-    ticket: {
-      type: Number,
-      min: [0, "cannot be negative"],
+    description: {
+      type: String,
+      default:"",
+
+      minLength: 0,
+      maxLength: 258,
     },
+    isPublished: {
+      type: Boolean,
+      default: false
+    },
+    tickets: [
+      {
+        quantities: {
+          type: Number,
+          min: [0, "cannot be negative"],
+        },
+        cathegory: {
+          type: String,
+          minLength: 3,
+          maxLength: 38,
+        },
+        price: { type: Number },
+        color: { type: String },
+        type: { type: String },
+        column: { type: Number },
+        row: { type: Number },
+      },
+    ],
     soldTicket: [
       {
         type: mongoose.ObjectId,
@@ -59,17 +84,17 @@ const eventSchema = mongoose.Schema(
           type: mongoose.ObjectId,
           ref: "user",
         },
-        role:{
+        role: {
           type: String,
           minLength: 2,
           maxLength: 38,
         },
-        team:{
+        team: {
           type: String,
           minLength: 2,
           maxLength: 38,
         },
-        permission:{
+        permission: {
           type: String,
           minLength: 2,
           maxLength: 38,
