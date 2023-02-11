@@ -21,29 +21,44 @@ const TicketControllers = {
 
   async infoTicket(req, res) {
     TicketModel.findById({ _id: req.body._id })
-      .populate("event")
-      .exec((err, user) => {
+      .populate("owner_id")
+      .exec((err, ticket) => {
         if (err)
           return res.status(400).send({
             success: false,
             message: "Erreur data user",
           });
-        if (user === null) {
+        if (ticket === null) {
           return res.status(400).send({
             success: false,
             message: "Erreur user delete",
           });
         }
-        return res.status(200).send({
-          success: true,
-          message: "Ok data user",
-          data: user,
-        });
+        EventModel.findOne({ "tickets.ticket_id": ticket.event_id })
+          .populate("owner.user_id")
+          .exec((err, event) => {
+            if (err)
+              return res.status(400).send({
+                success: false,
+                message: "Erreur data user",
+              });
+            if (event === null) {
+              return res.status(400).send({
+                success: false,
+                message: "Erreur user delete",
+              });
+            } else {
+              return res.status(200).send({
+                success: true,
+                message: "Ok data user",
+                data: { ticket, event },
+              });
+            }
+          });
       });
   },
 
   createTicketForEvent(req, res) {
-
     EventModel.findByIdAndUpdate(
       req.body.project_id,
       {
@@ -73,6 +88,84 @@ const TicketControllers = {
           errors: err,
         });
       });
+  },
+
+  async checkTicket(req, res, next) {
+    let checkTickets = [];
+    // faire une boucle avec le array de ticket
+    // voir si des ticket hexiste deja pour les place acheté
+    // si rien passer au suivant si non retournée le tableau des tickets indispo
+    const promises = req.body.arrayTickets.map(async (dataTicket) => {
+      const query = {
+        event_id: dataTicket.ticket._id,
+        row: dataTicket.row,
+        column: dataTicket.column,
+      };
+      const event = await TicketModel.findOne(query);
+      if (event !== null) {
+        checkTickets.push(event);
+      }
+    });
+
+    await Promise.all(promises);
+
+    if (checkTickets.length !== 0) {
+      return res.status(400).send({
+        success: false,
+        message: "Erreur add ticket",
+        errors: checkTickets,
+      });
+    } else {
+      next();
+    }
+  },
+
+  async createTicket(req, res, next) {
+    let checkCreateTickets = [];
+    let erreurCreateTickets = [];
+
+    // Create an array of promises
+    const promises = req.body.arrayTickets.map(async (dataTicket) => {
+      let create = "";
+      if (dataTicket.owner_id) {
+        create = {
+          owner_id: dataTicket.owner_id,
+          event_id: dataTicket.ticket._id,
+          row: dataTicket.row,
+          column: dataTicket.column,
+        };
+      } else {
+        create = {
+          owner_id: req.decodedToken._id,
+          event_id: dataTicket.ticket._id,
+          row: dataTicket.row,
+          column: dataTicket.column,
+        };
+      }
+
+      const event = await TicketModel.create(create);
+
+      if (event === null) {
+        erreurCreateTickets.push(create);
+      } else {
+        checkCreateTickets.push(event);
+      }
+    });
+
+    // Wait for all promises to resolve
+    await Promise.all(promises);
+
+    if (checkCreateTickets.length === 0) {
+      return res.status(400).send({
+        success: false,
+        message: "Erreur add ticket",
+        errors: erreurCreateTickets,
+      });
+    } else {
+      req.erreurCreateTickets = erreurCreateTickets;
+      req.checkCreateTickets = checkCreateTickets;
+      next();
+    }
   },
 };
 

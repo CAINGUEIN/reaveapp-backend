@@ -45,14 +45,14 @@ const eventSchema = mongoose.Schema(
     },
     description: {
       type: String,
-      default:"",
+      default: "",
 
       minLength: 0,
-      maxLength: 258,
+      maxLength: 1500,
     },
     isPublished: {
       type: Boolean,
-      default: false
+      default: false,
     },
     tickets: [
       {
@@ -70,12 +70,20 @@ const eventSchema = mongoose.Schema(
         type: { type: String },
         column: { type: Number },
         row: { type: Number },
-      },
-    ],
-    soldTicket: [
-      {
-        type: mongoose.ObjectId,
-        ref: "ticket",
+        soldTickets: [
+          {
+            ticket_id: {
+              type: mongoose.ObjectId,
+              ref: "ticket",
+            },
+            row: {
+              type: Number,
+            },
+            column: {
+              type: Number,
+            },
+          },
+        ],
       },
     ],
     staff: [

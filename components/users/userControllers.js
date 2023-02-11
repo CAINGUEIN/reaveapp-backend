@@ -185,10 +185,69 @@ const userControllers = {
           });
       })
       .catch((err) => {
-        res.status(400).send({ success: false, message: "Erreur send Coin", data: err });
+        res
+          .status(400)
+          .send({ success: false, message: "Erreur send Coin", data: err });
       });
   },
+  async debitCoinForNewTicket(req, res, next) {
+    let totalPrice = 0;
+    let historierPush = [];
+    const promises = req.body.arrayTickets.map(async (dataTicket) => {
+      totalPrice = totalPrice - dataTicket.ticket.price;
+      let query = "";
+      let owner = "";
+      if (dataTicket.owner_id !== undefined) {
+        owner = dataTicket.owner_id._id;
+        query = {
+          $addToSet: {
+            historiesCoin: {
+              type: "GiftTicket",
+              value: 0,
+              message:
+                "ticket" +
+                dataTicket.ticket.cathegory +
+                "pour " +
+                req.body.eventName,
+            },
+          },
+        };
+        historierPush.push({
+          type: "GiftedTicket",
+          value: -dataTicket.ticket.price,
+          message: "ticket offert pour " + req.body.eventName,
+        });
+      } else {
+        owner = req.decodedToken._id;
+        query = {
+          $addToSet: {
+            historiesCoin: {
+              type: "BuyTicket",
+              value: -dataTicket.ticket.price,
+              message:
+                "achat d'un ticket" +
+                dataTicket.ticket.cathegory +
+                "pour " +
+                req.body.eventName,
+            },
+          },
+        };
+      }
 
+      const event = await UserModel.findByIdAndUpdate(owner, query);
+    });
+    await Promise.all(promises);
+
+    const price = await UserModel.findByIdAndUpdate(req.decodedToken._id, {
+      $inc:
+        //list des chose a changer pour cette route
+        { coin: totalPrice },
+      $addToSet: {
+        historiesCoin: historierPush,
+      },
+    });
+    next();
+  },
   debitCoin(req, res, next) {
     ticket = req.dataEvent;
     UserModel.findByIdAndUpdate(
@@ -209,15 +268,6 @@ const userControllers = {
     )
       .then(next())
       .catch((err) => {
-        EventModel.findByIdAndUpdate(
-          req.body.event_id,
-          {
-            $inc:
-              //list des chose a changer pour cette route
-              { ticket: 1 },
-          },
-          { new: true, runValidators: true }
-        );
         res.status(400).send({ success: false, message: "Erreur update Coin" });
       });
   },
@@ -238,6 +288,60 @@ const userControllers = {
       .catch((err) => {
         res.status(400).send({ success: false, message: "Erreur add ticket" });
       });
+  },
+
+  async addNewTicket(req, res, next) {
+    let erreurTicketUser = [];
+    let ticketUser = [];
+    const promises = req.checkCreateTickets.map(async (ticket) => {
+      const query = {
+        _id: ticket.owner_id,
+      };
+      const options = {
+        new: true,
+      };
+      const update = {
+        $addToSet: {
+          ticket: ticket._id,
+        },
+      };
+      const event = await UserModel.findOneAndUpdate(query, update, options);
+      if (event === null) {
+        erreurTicketUser.push(event);
+      } else {
+        ticketUser.push(event);
+      }
+    });
+    await Promise.all(promises);
+
+    if (ticketUser.length === 0) {
+      //ne peas oublier que pour le moment j'anule pas l'etape d'avant et donc les ticket sont deja crée il faudrait le delete mais pour la version demo pas besoin
+      return res.status(400).send({
+        success: false,
+        message: "Erreur add ticket in user",
+      });
+    } else {
+      UserModel.findById(req.decodedToken._id).populate("friends", "userTag profileName")
+      .exec((err, user) => {
+        if (err)
+          return res.status(400).send({
+            success: false,
+            message: "Erreur data user",
+          });
+        if (user === null) {
+          return res.status(400).send({
+            success: false,
+            message: "Erreur user delete",
+          });
+        }
+        return res.status(200).send({
+          success: true,
+          message: "add ticket in user",
+          data: user,
+        });
+      });
+      
+    }
   },
 
   updateUserTruePro(req, res) {

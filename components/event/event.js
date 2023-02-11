@@ -29,7 +29,7 @@ const EventControllers = {
     req.optionQuery = {
       date: { $gt: timestamp },
       ticket: { $gt: 0 },
-      isPublished: true
+      isPublished: true,
     };
     // recup des 20 prochain
     let perpage = "";
@@ -67,10 +67,7 @@ const EventControllers = {
   async dataEvent(req, res) {
     EventModel.findById(req.body._id)
       // ici c'est les key a populate avec les nested specifique
-      .populate(
-        "soldTicket owner.user_id staff.staff_id",
-        "userTag profileName owner"
-      )
+      .populate("owner.user_id staff.staff_id", "userTag profileName owner")
       .exec((err, user) => {
         if (err)
           return res.status(400).send({
@@ -171,7 +168,7 @@ const EventControllers = {
         openDate: update.openDate,
         date: update.date,
         description: update.description,
-        isPublished: update.isPublished
+        isPublished: update.isPublished,
       },
       { new: true, runValidators: true }
     )
@@ -306,13 +303,11 @@ const EventControllers = {
       { new: true, runValidators: true }
     )
       .then((event) => {
-        res
-          .status(200)
-          .send({
-            success: true,
-            message: "Ok remove staff event",
-            data: event,
-          });
+        res.status(200).send({
+          success: true,
+          message: "Ok remove staff event",
+          data: event,
+        });
       })
       .catch((err) => {
         return res.status(400).send({
@@ -321,6 +316,43 @@ const EventControllers = {
           errors: err,
         });
       });
+  },
+
+  async addSoldeTickets(req, res, next) {
+    let soldTicket = [];
+    const promises = req.checkCreateTickets.map(async (ticket) => {
+      const query = {
+        "tickets._id": ticket.event_id,
+      };
+      const data = {
+        ticket_id: ticket._id,
+        row: ticket.row,
+        column: ticket.column,
+      };
+      const update = {
+        $addToSet: {
+          "tickets.$.soldTickets": [data],
+        },
+      };
+      const options = {
+        new: true,
+      };
+      const event = await EventModel.findOneAndUpdate(query, update, options);
+      soldTicket.push(event);
+    });
+    
+    await Promise.all(promises);
+    console.log(soldTicket);
+    if (soldTicket === null) {
+      //ne peas oublier que pour le moment j'anule pas l'etape d'avant et donc les ticket sont deja crée il faudrait le delete mais pour la version demo pas besoin
+      return res.status(400).send({
+        success: false,
+        message: "Erreur add ticket in event",
+      });
+    } else {
+      req.updateEvent = soldTicket;
+      next();
+    }
   },
 };
 

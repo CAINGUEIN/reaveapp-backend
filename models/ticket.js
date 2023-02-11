@@ -2,14 +2,20 @@ const mongoose = require("mongoose");
 
 const ticketSchema = mongoose.Schema(
   {
-    owner: {
+    owner_id: {
       type: mongoose.ObjectId,
       ref: "user",
     },
-    event: {
+    event_id: {
       type: mongoose.ObjectId,
       ref: "event",
-    }
+    },
+    row: {
+      type: Number,
+    },
+    column: {
+      type: Number,
+    },
   },
   {
     timestamps: true,
