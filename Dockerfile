@@ -1,13 +1,9 @@
-#!/bin/bash
-workd="/home/docker/image_creation/back/"
-
-sudo rm -rf "$workd"
-sudo mkdir "$workd"
-sudo git clone http://172.16.20.11:4000/gazo/web_back.git "$workd"
-sudo docker build "$workd" -t reave/app_back
-sudo rm -rf "$workd"
-echo "--------------------------------------------------------------------------------"
-echo "Image 'gazo/web_back' cree avec succes"
-echo "Sur Portainer : Stack > web_deploy"
-echo "En haut choisir 'Editor'"
-echo "Tout en bas de la page : Update the stack"
+FROM node:current-alpine3.15
+RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
+WORKDIR /home/node/app
+COPY --chown=node:node package*.json ./
+USER node
+RUN npm install
+COPY --chown=node:node . .
+EXPOSE 8080
+CMD [ "node", "./bin/www" ]
