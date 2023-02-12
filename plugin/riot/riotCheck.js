@@ -5,7 +5,7 @@ exports.riotCheck = async () => {
   let MAJ = "";
   let interval = 6000000;
   console.log("Lancement Riot version check");
-  const result = await ModelVersion.find()
+  const result = await ModelVersion.find();
   if (result.length === 0) {
     let version = await checkVersionFromRiot("");
     console.log(version);
@@ -15,7 +15,7 @@ exports.riotCheck = async () => {
       if (!isVersion) {
         createNewVersion(MAJ);
       } else {
-        console.log('version a jour');
+        console.log("version a jour");
       }
     } else {
       console.log("pas de version");
@@ -29,7 +29,7 @@ exports.riotCheck = async () => {
       if (!isVersion) {
         createNewVersion(MAJ);
       } else {
-        console.log('version a jour');
+        console.log("version a jour");
       }
     } else {
       console.log("pas de version");
@@ -39,6 +39,7 @@ exports.riotCheck = async () => {
 
 async function checkVersionFromRiot(MAJ) {
   const result = await riotServices.version();
+  console.log("verif riot version", result);
   if (result.status === 200 && MAJ !== result.data[0]) {
     return result.data[0];
   } else {
@@ -47,6 +48,7 @@ async function checkVersionFromRiot(MAJ) {
 }
 
 async function checkVersionFromBack(MAJ) {
+  console.log("verif back version", result);
   const result = await ModelVersion.find({ version: MAJ });
   if (result.length > 0) {
     return true;
@@ -66,7 +68,7 @@ async function createNewVersion(MAJ) {
     "item",
   ];
   let data = await createData(target, MAJ);
-  data.version = MAJ ;
+  data.version = MAJ;
   console.log("create new version");
   ModelVersion.create(data);
 }
@@ -83,7 +85,7 @@ async function createData(target, MAJ) {
   };
   for await (const req of target) {
     const result = await riotServices.versionData(MAJ, req);
-    dataCreate[req] = result.data ;
+    dataCreate[req] = result.data;
   }
   return dataCreate;
 }
