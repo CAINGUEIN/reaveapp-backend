@@ -1,14 +1,9 @@
 const axios = require("axios") ;
 
-console.log(process.env.API_LOL_URL);
-
 const Base = axios.create({
   baseURL: process.env.API_LOL_URL,
 });
 module.exports = Base;
-
-
-
 
 Base.interceptors.request.use(
   function (config) {
