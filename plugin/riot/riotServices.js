@@ -7,7 +7,6 @@ const Ddragon = axios.create({
 
 class riotServices {
   static async version() {
-    console.log(Ddragon, process.env.LOL_DATA);
     return Ddragon.get(`api/versions.json`)
       .then((response) => {
         return response;

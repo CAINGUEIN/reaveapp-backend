@@ -8,7 +8,6 @@ exports.riotCheck = async () => {
   const result = await ModelVersion.find();
   if (result.length === 0) {
     let version = await checkVersionFromRiot("");
-    console.log(version);
     if (version) {
       MAJ = version;
       let isVersion = await checkVersionFromBack(MAJ);
@@ -39,7 +38,6 @@ exports.riotCheck = async () => {
 
 async function checkVersionFromRiot(MAJ) {
   const result = await riotServices.version();
-  console.log("verif riot version", result);
   if (result.status === 200 && MAJ !== result.data[0]) {
     return result.data[0];
   } else {
@@ -48,7 +46,6 @@ async function checkVersionFromRiot(MAJ) {
 }
 
 async function checkVersionFromBack(MAJ) {
-  console.log("verif back version", result);
   const result = await ModelVersion.find({ version: MAJ });
   if (result.length > 0) {
     return true;
