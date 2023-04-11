@@ -49,6 +49,21 @@ const userSchema = mongoose.Schema(
       //TODO: verifier pourquoi ça marche pas le negative validator
     },
     ticket: [{ type: mongoose.ObjectId, ref: "ticket" }],
+    equipements: [
+      {
+        name: { type: String },
+        totalQuantities: { type: Number, default: 1 },
+        info: [
+          {
+            event_id: {
+              type: mongoose.ObjectId,
+              ref: "event",
+            },
+            quantities: { type: Number, default: 1 },
+          },
+        ],
+      },
+    ],
     pro: {
       type: Boolean,
       default: false,
