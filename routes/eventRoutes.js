@@ -29,15 +29,10 @@ eventRouter.post(
 eventRouter.post(
   "/buy",
   TokenHelpers.verifyTokenId,
-  //check ticket dispo dans event retrait 1
   EventControllers.recupTicket,
-  //check coin et debit
   userControllers.debitCoin,
-  //création du ticket id user et id event
   TicketControllers.generateTicket,
-  //dans event push du id ticket
   EventControllers.soldTicket,
-  //dans user push du id ticket
   userControllers.addTicket
 );
 
@@ -95,5 +90,24 @@ eventRouter.post(
   TokenHelpers.verifyTokenId,
   PermissionsValidate.isAdmin,
   EventControllers.removeStaff
+);
+
+eventRouter.post(
+  "/addItem",
+  TokenHelpers.verifyTokenId,
+  PermissionsValidate.isAdmin,
+  EventControllers.addItem
+);
+eventRouter.post(
+  "/modifyItem",
+  TokenHelpers.verifyTokenId,
+  PermissionsValidate.isAdmin,
+  EventControllers.modifyItem
+);
+eventRouter.post(
+  "/removeItem",
+  TokenHelpers.verifyTokenId,
+  PermissionsValidate.isAdmin,
+  EventControllers.removeItem
 );
 module.exports = eventRouter;

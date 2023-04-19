@@ -163,6 +163,7 @@ const EventControllers = {
         cp: update.cp,
         country: update.country,
         game: update.game,
+        platform: update.platform,
         price: update.price,
         type: update.type,
         openDate: update.openDate,
@@ -340,7 +341,7 @@ const EventControllers = {
       const event = await EventModel.findOneAndUpdate(query, update, options);
       soldTicket.push(event);
     });
-    
+
     await Promise.all(promises);
     console.log(soldTicket);
     if (soldTicket === null) {
@@ -353,6 +354,88 @@ const EventControllers = {
       req.updateEvent = soldTicket;
       next();
     }
+  },
+  addItem(req, res) {
+    EventModel.findByIdAndUpdate(
+      req.body.project_id,
+      {
+        $addToSet: {
+          equipements: {
+            name: req.body.name,
+            quantity: req.body.quantity,
+            bundle: req.body.bundle,
+            kit: req.body.kit,
+            tags: req.body.tags,
+          },
+        },
+      },
+      { new: true, runValidators: true }
+    )
+      .then((event) => {
+        res
+          .status(200)
+          .send({ success: true, message: "Ok add item event", data: event });
+      })
+      .catch((err) => {
+        return res.status(400).send({
+          success: false,
+          message: "Erreur add item",
+          errors: err,
+        });
+      });
+  },
+
+  modifyItem(req, res) {
+    console.log(req.body);
+    EventModel.findOneAndUpdate(
+      { "equipements._id": req.body._id },
+      {
+        $set: {
+          "equipements.$": {
+            name: req.body.name,
+            quantity: req.body.quantity,
+            bundle: req.body.bundle,
+            kit: req.body.kit,
+            tags: req.body.tags,
+          },
+        },
+      },
+      { new: true, runValidators: true }
+    )
+      .then((event) => {
+        res
+          .status(200)
+          .send({ success: true, message: "Ok add item event", data: event });
+      })
+      .catch((err) => {
+        return res.status(400).send({
+          success: false,
+          message: "Erreur add item",
+          errors: err,
+        });
+      });
+  },
+
+  removeItem(req, res) {
+    EventModel.findByIdAndUpdate(
+      req.body.project_id,
+      { $pull: { equipements: { _id: req.body.equipements_id } } },
+      { new: true, runValidators: true }
+    )
+      .then((event) => {
+        res.status(200).send({
+          success: true,
+          message: "Ok remove item event",
+          data: event,
+        });
+      })
+      .catch((err) => {
+        return res.status(400).send({
+          success: false,
+          message: "Erreur remove item",
+          errors: err,
+        });
+      });
   },
 };
 

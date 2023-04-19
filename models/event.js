@@ -37,6 +37,21 @@ const eventSchema = mongoose.Schema(
     },
     date: { type: Date },
     openDate: { type: Date },
+    platform: {
+      //par la suite une ID de game
+      type: String,
+      minLength: 2,
+      maxLength: 38,
+    },
+    equipements: [
+      {
+        name: { type: String },
+        quantity: { type: Number },
+        bundle: { type: String },
+        kit: { type: String },
+        tags: { type: String },
+      },
+    ],
     game: {
       //par la suite une ID de game
       type: String,
