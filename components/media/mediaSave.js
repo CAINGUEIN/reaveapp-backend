@@ -2,8 +2,8 @@ const sharp = require("sharp");
 
 const AWS = require("aws-sdk");
 const s3 = new AWS.S3({
-  accessKeyId: process.env.ACCESMINIO,
-  secretAccessKey: process.env.SECRETACCESMINIO,
+  accessKeyId: process.env.ACCESSMINIO,
+  secretAccessKey: process.env.SECRETACCESSMINIO,
   endpoint: process.env.ENDPOINTMINIO,
   s3ForcePathStyle: true, // needed with minio?
   signatureVersion: "v4",
