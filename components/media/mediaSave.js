@@ -35,9 +35,11 @@ const MediaSave = {
           let key = nameResize[index];
           let obj = {};
           if (err) {
+            console.log(err);
             obj[key] = err;
             success.push(obj);
           } else {
+            console.log(true);
             obj[key] = true;
             success.push(obj);
           }
