@@ -16,13 +16,14 @@ const MediaSave = {
     let success = [];
     for (let index = 0; index < resize.length; index++) {
       let img = await sharp(req.file.buffer)
-        .resize({
-          width: resize[index],
-          height: resize[index],
-        })
-        .toFormat("png")
-        .png({ force: true })
-        .toBuffer();
+      .resize({
+        width: resize[index],
+        height: resize[index],
+      })
+      .toFormat("png")
+      .png({ force: true })
+      .toBuffer();
+      console.log(index, img);
       var params = {
         Bucket: "useravatar",
         Key: nameResize[index] + req.file.originalname,
