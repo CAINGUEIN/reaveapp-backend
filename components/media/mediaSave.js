@@ -2,8 +2,8 @@ const sharp = require("sharp");
 
 const AWS = require("aws-sdk");
 const s3 = new AWS.S3({
-  accessKeyId: "Back-end",
-  secretAccessKey: "Back-end",
+  accessKeyId: "back-reave",
+  secretAccessKey: "tcLjRYyjBKvW8JxV",
   /* endpoint: "http://172.16.20.200:9000/", */
   endpoint: "https://media.reave.dev",
   s3ForcePathStyle: true, // needed with minio?
@@ -83,6 +83,7 @@ const MediaSave = {
             obj[key] = true;
             success.push(obj);
           }
+          resolve();
         });
       });
     }
