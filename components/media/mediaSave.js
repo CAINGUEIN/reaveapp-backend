@@ -2,10 +2,9 @@ const sharp = require("sharp");
 
 const AWS = require("aws-sdk");
 const s3 = new AWS.S3({
-  accessKeyId: "back-reave",
-  secretAccessKey: "tcLjRYyjBKvW8JxV",
-  /* endpoint: "http://172.16.20.200:9000/", */
-  endpoint: "https://media.reave.dev",
+  accessKeyId: process.env.ACCESMINIO,
+  secretAccessKey: process.env.SECRETACCESMINIO,
+  endpoint: process.env.ENDPOINTMINIO,
   s3ForcePathStyle: true, // needed with minio?
   signatureVersion: "v4",
 });
