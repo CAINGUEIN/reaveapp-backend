@@ -133,7 +133,13 @@ const EventControllers = {
         { staff: { $elemMatch: { staff_id: req.decodedToken._id } } },
       ],
     })
-      .then((result) => {
+      .populate("owner.user_id staff.staff_id", "userTag profileName owner")
+      .exec((err, result) => {
+        if (err)
+          return res.status(400).send({
+            success: false,
+            message: "Erreur personalOperator",
+          });
         return res.status(200).send({
           success: true,
           message: "Ok personalOperator",
