@@ -110,6 +110,7 @@ const EventControllers = {
         });
       });
   },
+
   soldTicket(req, res, next) {
     EventModel.findByIdAndUpdate(req.body.event_id, {
       $addToSet: {
@@ -144,13 +145,6 @@ const EventControllers = {
           success: true,
           message: "Ok personalOperator",
           data: result,
-        });
-      })
-      .catch((err) => {
-        return res.status(400).send({
-          success: false,
-          message: "Erreur personalOperator",
-          errors: err,
         });
       });
   },
