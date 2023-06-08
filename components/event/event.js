@@ -48,20 +48,21 @@ const EventControllers = {
       .sort({ date: 1 })
       .limit(perpage)
       .skip(page * perpage)
-      .then((result) => {
+      .populate("owner.user_id staff.staff_id", "userTag profileName owner")
+      .exec((err, result) => {
+        if (err) {
+          return res.status(400).send({
+            success: false,
+            message: "Erreur data event",
+            errors: err,
+          });
+        }
         return res.status(200).send({
           success: true,
           message: "Ok twenty event",
           data: result,
         });
       })
-      .catch((err) => {
-        return res.status(400).send({
-          success: false,
-          message: "Erreur data event",
-          errors: err,
-        });
-      });
   },
 
   async dataEvent(req, res) {
