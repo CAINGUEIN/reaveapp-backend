@@ -9,6 +9,7 @@ const app = express();
 
 const cors = require("cors");
 
+
 const publicRouter = require("./routes/publicRoutes.js");
 const authRouter = require("./routes/authRoutes.js");
 const userRouter = require("./routes/userRoutes.js");
@@ -35,6 +36,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 //ajout des routes dans l'app
 app.use("/calendar/personal", calendarPersonalRoutes);
+
+app.use('/uploads', express.static('uploads'));
+
 app.use("/auth", authRouter);
 app.use("/ticket", ticketRouter);
 app.use("/event", eventRouter);

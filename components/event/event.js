@@ -1,4 +1,5 @@
 const EventModel = require("../../models/event");
+const VenueModel = require("../../models/venue");
 
 const EventControllers = {
   async createEvent(req, res) {
@@ -21,6 +22,53 @@ const EventControllers = {
           message: "Erreur data space",
           data: err,
         });
+      });
+  },
+
+  async createVenue(req, res) {
+    //creation des default data
+    let createValues = req.body;
+    console.log('PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP ', req.body);
+    console.log('PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP ', req);
+    createValues["owner.user_id"] = req.decodedToken._id;
+    // creation de l'event
+    VenueModel.create(createValues)
+      .then((result) => {
+        return res.status(200).send({
+          success: true,
+          message: "event data",
+          data: result,
+        });
+      })
+      .catch((err) => {
+        //si non rien on sort
+        return res.status(400).send({
+          success: false,
+          message: "Erreur data space",
+          data: err,
+        });
+      });
+  },
+
+  async addPrimaryPicVenue(imageName, venueId, res) {
+    console.log('AAAAAAAAAAAAAA : ', imageName, venueId)
+    VenueModel.findOneAndUpdate(
+      { _id: venueId },
+        {
+          $set: {
+            primaryPic: imageName
+          },
+        },
+        { new: true, runValidators: true }
+      ).then((updatedVenue) => {
+        if (updatedVenue) {
+          res.status(200).send({ success: true, message: "Image added to primary pics", data: updatedVenue });
+        } else {
+          res.status(404).send({ success: false, message: "Venue not found" });
+        }
+      })
+      .catch((err) => {
+        res.status(400).send({ success: false, message: "Error adding image to primary pics", error: err });
       });
   },
 
@@ -89,6 +137,30 @@ const EventControllers = {
       });
   },
 
+  async dataVenue(req, res) {
+    VenueModel.findById(req.body._id)
+      // ici c'est les key a populate avec les nested specifique
+      .populate("owner.user_id staff.staff_id", "userTag profileName owner")
+      .exec((err, user) => {
+        if (err)
+          return res.status(400).send({
+            success: false,
+            message: "Erreur data event",
+          });
+        if (user === null) {
+          return res.status(400).send({
+            success: false,
+            message: "Erreur event delete",
+          });
+        }
+        return res.status(200).send({
+          success: true,
+          message: "Ok data event",
+          data: user,
+        });
+      });
+  },
+
   async recupTicket(req, res, next) {
     EventModel.findByIdAndUpdate(
       req.body.event_id,
@@ -130,6 +202,28 @@ const EventControllers = {
 
   personalOperator(req, res, next) {
     EventModel.find({
+      $or: [
+        { "owner.user_id": req.decodedToken._id },
+        { staff: { $elemMatch: { staff_id: req.decodedToken._id } } },
+      ],
+    })
+      .populate("owner.user_id staff.staff_id", "userTag profileName owner")
+      .exec((err, result) => {
+        if (err)
+          return res.status(400).send({
+            success: false,
+            message: "Erreur personalOperator",
+          });
+        return res.status(200).send({
+          success: true,
+          message: "Ok personalOperator",
+          data: result,
+        });
+      });
+  },
+
+  personalOperatorVenue(req, res, next) {
+    VenueModel.find({
       $or: [
         { "owner.user_id": req.decodedToken._id },
         { staff: { $elemMatch: { staff_id: req.decodedToken._id } } },

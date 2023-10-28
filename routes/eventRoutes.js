@@ -15,6 +15,12 @@ eventRouter.post(
 );
 
 eventRouter.post(
+  "/createVenue",
+  TokenHelpers.verifyTokenId,
+  EventControllers.createVenue
+);
+
+eventRouter.post(
   "/list",
   TokenHelpers.verifyTokenId,
   EventControllers.listEvent
@@ -24,6 +30,12 @@ eventRouter.post(
   "/data",
   TokenHelpers.verifyTokenId,
   EventControllers.dataEvent
+);
+
+eventRouter.post(
+  "/dataVenue",
+  TokenHelpers.verifyTokenId,
+  EventControllers.dataVenue
 );
 
 eventRouter.post(
@@ -40,6 +52,12 @@ eventRouter.get(
   "/personalOperator",
   TokenHelpers.verifyTokenId,
   EventControllers.personalOperator
+);
+
+eventRouter.get(
+  "/personalOperatorVenue",
+  TokenHelpers.verifyTokenId,
+  EventControllers.personalOperatorVenue
 );
 
 eventRouter.post(

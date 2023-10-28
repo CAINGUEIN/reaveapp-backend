@@ -1,6 +1,8 @@
 const express = require("express");
 const userUpdateRouter = express.Router();
 
+const VenueModel = require("../models/venue");
+
 const TokenHelpers = require("../components/core/tokenHelpers");
 const userControllers = require("../components/users/userControllers");
 const DataSave = require("../components/data/dataSave");
@@ -10,10 +12,30 @@ const DataCheck = require("../components/data/dataCheck");
 const MediaSave = require("../components/media/mediaSave");
 const DataReturnLol = require("../components/data/dataReturnLol");
 
-//multer
+///const storage = multer.memoryStorage();
+
+// -Boatti- comment :
+// Multer is used to upload pictures.
+// Pictures are upload to the folder /uploads.
+// Then url of the pic are stored to MongoDB.
+// This system is a Local storage system. This is not a good system and is only used for the prototype.
+// The solution is an Amazon S3 storage for exemple.
+
 const multer = require('multer');
-const storage = multer.memoryStorage();
+const { set } = require("..");
+const EventControllers = require("../components/event/event");
+///const storage = multer({ dest: 'uploads/' })
+const storage = multer.diskStorage( {
+  destination: function(req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function(req, file, cb) {
+    const uniqueSuffix = Date.now()
+    cb(null, uniqueSuffix + file.originalname);
+  },
+})
 const uploads = multer({storage}) 
+
 
 userUpdateRouter.put(
   "/email",
@@ -26,7 +48,7 @@ userUpdateRouter.put(
   TokenHelpers.verifyTokenId,
   //recup l'objet user
   searchHelpers.findWithId, // dans req.dataUser
-  //m qui check si le puuid exist deja
+  //m qui check si le puuid existe deja
   DataCheck.puuidMatch,
   //recup avec le puuid les xx derniers matchId
   RequestApiLol.requestMatchsListWithDataUser, // dans req.resultListMatchsApiLol
@@ -73,6 +95,28 @@ userUpdateRouter.post(
   //transforme l'image en toute les tailles
   MediaSave.imgResizeEvent
 )
+
+userUpdateRouter.post(
+  "/pic/venue",
+  TokenHelpers.verifyTokenId,
+  uploads.single('selectedPic'),
+  
+  async (req, res) => {
+    console.log('mmmmmmmmmm : ', req);
+    console.log('SSSSSSSSSSS ' , req.body.venueId);
+    const imageName = req.file.filename;
+    const venueId = req.body.venueId;
+    try {
+      EventControllers.addPrimaryPicVenue(imageName, venueId, res);
+      //await VenueModel.findOneAndUpdate({ owner : imageName}, {$set : {primaryPic : imageName}})
+      //res.send("Successful upload");
+    } catch (error) {
+      //res.send(error);
+    }
+  }
+  
+);
+
 
 userUpdateRouter.post(
   "/img/item",

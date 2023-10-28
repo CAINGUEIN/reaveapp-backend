@@ -7,6 +7,6 @@ mongoose.connect(DB_URI).then(
     console.log(`Db Mongoose connecté`);
   },
   (err) => {
-    console.log(`Db Mongoose erreure`, err);
+    console.log(`Db Mongoose erreur`, err);
   }
 );
