@@ -29,6 +29,25 @@ const venueSchema = mongoose.Schema(
        type: String,
        default: '',
      },
+     address: {
+      street: {
+        type: String,
+        default: '',
+      },
+      city: {
+        type: String,
+        default: '',
+      },
+      pcode: {
+        type: Number,
+        default: null,
+      },
+      country: {
+        type: String,
+        default: '',
+      }
+
+     },
     // secondaryPics: {
     //   type: Object, 
     //   default: {},
@@ -137,26 +156,6 @@ const venueSchema = mongoose.Schema(
     },
     //quand la salle sera choissisable remplissage auto
     venueName: {
-      type: String,
-      minLength: 3,
-      maxLength: 72,
-    },
-    adress: {
-      type: String,
-      minLength: 3,
-      maxLength: 72,
-    },
-    city: {
-      type: String,
-      minLength: 3,
-      maxLength: 72,
-    },
-    cp: {
-      type: String,
-      minLength: 4,
-      maxLength: 6,
-    },
-    country: {
       type: String,
       minLength: 3,
       maxLength: 72,

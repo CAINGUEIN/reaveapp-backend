@@ -100,23 +100,15 @@ userUpdateRouter.post(
   "/pic/venue",
   TokenHelpers.verifyTokenId,
   uploads.single('selectedPic'),
-  
   async (req, res) => {
-    console.log('mmmmmmmmmm : ', req);
-    console.log('SSSSSSSSSSS ' , req.body.venueId);
     const imageName = req.file.filename;
     const venueId = req.body.venueId;
     try {
       EventControllers.addPrimaryPicVenue(imageName, venueId, res);
-      //await VenueModel.findOneAndUpdate({ owner : imageName}, {$set : {primaryPic : imageName}})
-      //res.send("Successful upload");
     } catch (error) {
-      //res.send(error);
     }
   }
-  
 );
-
 
 userUpdateRouter.post(
   "/img/item",

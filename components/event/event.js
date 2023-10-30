@@ -72,6 +72,31 @@ const EventControllers = {
       });
   },
 
+  async addVenueAddressData(venueId, venueName, street, city, pCode, country, res) {
+    VenueModel.findOneAndUpdate(
+      { _id: venueId },
+        {
+          $set: {
+            name : venueName,
+            'address.street' : street,
+            'address.city' : city,
+            'address.pcode' : pCode,
+            'address.country' : country,
+          },
+        },
+        { new: true, runValidators: true }
+      ).then((updatedAddress) => {
+        if (updatedAddress) {
+          res.status(200).send({ success: true, message: "Venue Address Data updated", data: updatedAddress });
+        } else {
+          res.status(404).send({ success: false, message: "Venue not found" });
+        }
+      })
+      .catch((err) => {
+        res.status(400).send({ success: false, message: "Error updating data address venue", error: err });
+      });
+  },
+
   async listEvent(req, res) {
     let timestamp = Date.now();
     req.optionQuery = {
