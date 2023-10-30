@@ -1,5 +1,26 @@
 const EventModel = require("../../models/event");
 const VenueModel = require("../../models/venue");
+const fetch = require('node-fetch');
+
+async function getLatLong(address) {
+  const apiUrl = `https://geocode.maps.co/search?${address}`;
+
+  try {
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+    // Assuming data is an array and you want the first result's lat and lon
+    if (Array.isArray(data) && data.length > 0) {
+      return {
+        latitude: data[0].lat,
+        longitude: data[0].lon
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching latitude and longitude: ", error);
+    return null;
+  }
+}
 
 const EventControllers = {
   async createEvent(req, res) {
@@ -52,56 +73,104 @@ const EventControllers = {
 
   async addPrimaryPicVenue(imageName, venueId, res) {
     console.log('AAAAAAAAAAAAAA : ', imageName, venueId)
-    VenueModel.findOneAndUpdate(
-      { _id: venueId },
-        {
-          $set: {
-            primaryPic: imageName
-          },
+    VenueModel.findOneAndUpdate({
+        _id: venueId
+      }, {
+        $set: {
+          primaryPic: imageName
         },
-        { new: true, runValidators: true }
-      ).then((updatedVenue) => {
+      }, {
+        new: true,
+        runValidators: true
+      }).then((updatedVenue) => {
         if (updatedVenue) {
-          res.status(200).send({ success: true, message: "Image added to primary pics", data: updatedVenue });
+          res.status(200).send({
+            success: true,
+            message: "Image added to primary pics",
+            data: updatedVenue
+          });
         } else {
-          res.status(404).send({ success: false, message: "Venue not found" });
+          res.status(404).send({
+            success: false,
+            message: "Venue not found"
+          });
         }
       })
       .catch((err) => {
-        res.status(400).send({ success: false, message: "Error adding image to primary pics", error: err });
+        res.status(400).send({
+          success: false,
+          message: "Error adding image to primary pics",
+          error: err
+        });
       });
   },
 
   async addVenueAddressData(venueId, venueName, street, city, pCode, country, res) {
-    VenueModel.findOneAndUpdate(
-      { _id: venueId },
-        {
+    const addressString = `street=${street}&city=${city}&state=&postalcode=${pCode}&country=${country}`;
+
+    try {
+      const geoData = await getLatLong(addressString);
+
+      if (geoData && geoData.latitude && geoData.longitude) {
+        VenueModel.findOneAndUpdate({
+          _id: venueId
+        }, {
           $set: {
-            name : venueName,
-            'address.street' : street,
-            'address.city' : city,
-            'address.pcode' : pCode,
-            'address.country' : country,
+            name: venueName,
+            'address.street': street,
+            'address.city': city,
+            'address.pcode': pCode,
+            'address.country': country,
+            'address.coordonates.latitude': parseFloat(geoData.latitude), // Assuming the data is string, convert to number
+            'address.coordonates.longitude': parseFloat(geoData.longitude),
           },
-        },
-        { new: true, runValidators: true }
-      ).then((updatedAddress) => {
-        if (updatedAddress) {
-          res.status(200).send({ success: true, message: "Venue Address Data updated", data: updatedAddress });
-        } else {
-          res.status(404).send({ success: false, message: "Venue not found" });
-        }
-      })
-      .catch((err) => {
-        res.status(400).send({ success: false, message: "Error updating data address venue", error: err });
+        }, {
+          new: true,
+          runValidators: true
+        }).then((updatedAddress) => {
+          if (updatedAddress) {
+            res.status(200).send({
+              success: true,
+              message: "Venue Address Data updated",
+              data: updatedAddress
+            });
+          } else {
+            res.status(404).send({
+              success: false,
+              message: "Venue not found"
+            });
+          }
+        }).catch((err) => {
+          res.status(400).send({
+            success: false,
+            message: "Error updating address data for the venue",
+            error: err
+          });
+        });
+      } else {
+        res.status(400).send({
+          success: false,
+          message: "Error fetching latitude and longitude from geocoding service"
+        });
+      }
+    } catch (error) {
+      res.status(500).send({
+        success: false,
+        message: "Internal server error",
+        error: error
       });
+    }
   },
 
   async listEvent(req, res) {
     let timestamp = Date.now();
     req.optionQuery = {
-      date: { $gt: timestamp },
-      ticket: { $gt: 0 },
+      date: {
+        $gt: timestamp
+      },
+      ticket: {
+        $gt: 0
+      },
       isPublished: true,
     };
     // recup des 20 prochain
@@ -118,7 +187,9 @@ const EventControllers = {
       page = req.body.page;
     }
     EventModel.find(req.optionQuery)
-      .sort({ date: 1 })
+      .sort({
+        date: 1
+      })
       .limit(perpage)
       .skip(page * perpage)
       .populate("owner.user_id staff.staff_id", "userTag profileName owner")
@@ -188,14 +259,17 @@ const EventControllers = {
 
   async recupTicket(req, res, next) {
     EventModel.findByIdAndUpdate(
-      req.body.event_id,
-      {
-        $inc:
+        req.body.event_id, {
+          $inc:
           //list des chose a changer pour cette route
-          { ticket: -1 },
-      },
-      { new: true, runValidators: true }
-    )
+          {
+            ticket: -1
+          },
+        }, {
+          new: true,
+          runValidators: true
+        }
+      )
       .then((dataEvent) => {
         req.dataEvent = dataEvent;
         next();
@@ -211,10 +285,10 @@ const EventControllers = {
 
   soldTicket(req, res, next) {
     EventModel.findByIdAndUpdate(req.body.event_id, {
-      $addToSet: {
-        soldTicket: req.ticket._id,
-      },
-    })
+        $addToSet: {
+          soldTicket: req.ticket._id,
+        },
+      })
       .then(next())
       .catch((err) => {
         return res.status(400).send({
@@ -227,11 +301,18 @@ const EventControllers = {
 
   personalOperator(req, res, next) {
     EventModel.find({
-      $or: [
-        { "owner.user_id": req.decodedToken._id },
-        { staff: { $elemMatch: { staff_id: req.decodedToken._id } } },
-      ],
-    })
+        $or: [{
+            "owner.user_id": req.decodedToken._id
+          },
+          {
+            staff: {
+              $elemMatch: {
+                staff_id: req.decodedToken._id
+              }
+            }
+          },
+        ],
+      })
       .populate("owner.user_id staff.staff_id", "userTag profileName owner")
       .exec((err, result) => {
         if (err)
@@ -249,11 +330,18 @@ const EventControllers = {
 
   personalOperatorVenue(req, res, next) {
     VenueModel.find({
-      $or: [
-        { "owner.user_id": req.decodedToken._id },
-        { staff: { $elemMatch: { staff_id: req.decodedToken._id } } },
-      ],
-    })
+        $or: [{
+            "owner.user_id": req.decodedToken._id
+          },
+          {
+            staff: {
+              $elemMatch: {
+                staff_id: req.decodedToken._id
+              }
+            }
+          },
+        ],
+      })
       .populate("owner.user_id staff.staff_id", "userTag profileName owner")
       .exec((err, result) => {
         if (err)
@@ -272,31 +360,36 @@ const EventControllers = {
   update(req, res) {
     let update = req.body;
     EventModel.findByIdAndUpdate(
-      update.event_id,
-      {
-        //list des chose a changer pour cette route
-        name: update.name,
-        orga: update.orga,
-        venueName: update.venueName,
-        adress: update.adress,
-        city: update.city,
-        cp: update.cp,
-        country: update.country,
-        game: update.game,
-        platform: update.platform,
-        price: update.price,
-        type: update.type,
-        openDate: update.openDate,
-        date: update.date,
-        description: update.description,
-        isPublished: update.isPublished,
-      },
-      { new: true, runValidators: true }
-    )
+        update.event_id, {
+          //list des chose a changer pour cette route
+          name: update.name,
+          orga: update.orga,
+          venueName: update.venueName,
+          adress: update.adress,
+          city: update.city,
+          cp: update.cp,
+          country: update.country,
+          game: update.game,
+          platform: update.platform,
+          price: update.price,
+          type: update.type,
+          openDate: update.openDate,
+          date: update.date,
+          description: update.description,
+          isPublished: update.isPublished,
+        }, {
+          new: true,
+          runValidators: true
+        }
+      )
       .then((event) => {
         res
           .status(200)
-          .send({ success: true, message: "Ok update event", data: event });
+          .send({
+            success: true,
+            message: "Ok update event",
+            data: event
+          });
       })
       .catch((err) => {
         res.status(400).send({
@@ -309,23 +402,28 @@ const EventControllers = {
 
   addStaff(req, res) {
     EventModel.findByIdAndUpdate(
-      req.body.project_id,
-      {
-        $addToSet: {
-          staff: {
-            staff_id: req.body.staff_id,
-            role: req.body.role,
-            permission: req.body.permission,
-            team: req.body.team,
+        req.body.project_id, {
+          $addToSet: {
+            staff: {
+              staff_id: req.body.staff_id,
+              role: req.body.role,
+              permission: req.body.permission,
+              team: req.body.team,
+            },
           },
-        },
-      },
-      { new: true, runValidators: true }
-    )
+        }, {
+          new: true,
+          runValidators: true
+        }
+      )
       .then((event) => {
         res
           .status(200)
-          .send({ success: true, message: "Ok add staff event", data: event });
+          .send({
+            success: true,
+            message: "Ok add staff event",
+            data: event
+          });
       })
       .catch((err) => {
         return res.status(400).send({
@@ -338,22 +436,27 @@ const EventControllers = {
 
   addStaffAndSwitchOwner(req, res) {
     EventModel.findByIdAndUpdate(
-      req.body.project_id,
-      {
-        $addToSet: {
-          staff: {
-            staff_id: req.decodedToken._id,
-            permission: "Admin",
+        req.body.project_id, {
+          $addToSet: {
+            staff: {
+              staff_id: req.decodedToken._id,
+              permission: "Admin",
+            },
           },
-        },
-        "owner.user_id": req.body.staff_id,
-      },
-      { new: true, runValidators: true }
-    )
+          "owner.user_id": req.body.staff_id,
+        }, {
+          new: true,
+          runValidators: true
+        }
+      )
       .then((event) => {
         res
           .status(200)
-          .send({ success: true, message: "Ok add staff event", data: event });
+          .send({
+            success: true,
+            message: "Ok add staff event",
+            data: event
+          });
       })
       .catch((err) => {
         return res.status(400).send({
@@ -366,9 +469,9 @@ const EventControllers = {
 
   modifyStaff(req, res) {
     console.log(req.body);
-    EventModel.findOneAndUpdate(
-      { "staff._id": req.body._id },
-      {
+    EventModel.findOneAndUpdate({
+        "staff._id": req.body._id
+      }, {
         $set: {
           "staff.$": {
             staff_id: req.body.staff_id,
@@ -377,13 +480,18 @@ const EventControllers = {
             team: req.body.team,
           },
         },
-      },
-      { new: true, runValidators: true }
-    )
+      }, {
+        new: true,
+        runValidators: true
+      })
       .then((event) => {
         res
           .status(200)
-          .send({ success: true, message: "Ok add staff event", data: event });
+          .send({
+            success: true,
+            message: "Ok add staff event",
+            data: event
+          });
       })
       .catch((err) => {
         return res.status(400).send({
@@ -396,17 +504,22 @@ const EventControllers = {
 
   modifyStaffAndSwitchOwner(req, res) {
     EventModel.findByIdAndUpdate(
-      req.body.project_id,
-      {
-        "owner.role": req.body.role,
-        "owner.team": req.body.team,
-      },
-      { new: true, runValidators: true }
-    )
+        req.body.project_id, {
+          "owner.role": req.body.role,
+          "owner.team": req.body.team,
+        }, {
+          new: true,
+          runValidators: true
+        }
+      )
       .then((event) => {
         res
           .status(200)
-          .send({ success: true, message: "Ok add staff event", data: event });
+          .send({
+            success: true,
+            message: "Ok add staff event",
+            data: event
+          });
       })
       .catch((err) => {
         return res.status(400).send({
@@ -419,10 +532,17 @@ const EventControllers = {
 
   removeStaff(req, res) {
     EventModel.findByIdAndUpdate(
-      req.body.project_id,
-      { $pull: { staff: { _id: req.body.staff_id } } },
-      { new: true, runValidators: true }
-    )
+        req.body.project_id, {
+          $pull: {
+            staff: {
+              _id: req.body.staff_id
+            }
+          }
+        }, {
+          new: true,
+          runValidators: true
+        }
+      )
       .then((event) => {
         res.status(200).send({
           success: true,
@@ -477,24 +597,29 @@ const EventControllers = {
   },
   addItem(req, res) {
     EventModel.findByIdAndUpdate(
-      req.body.project_id,
-      {
-        $addToSet: {
-          equipements: {
-            name: req.body.name,
-            quantity: req.body.quantity,
-            bundle: req.body.bundle,
-            kit: req.body.kit,
-            tags: req.body.tags,
+        req.body.project_id, {
+          $addToSet: {
+            equipements: {
+              name: req.body.name,
+              quantity: req.body.quantity,
+              bundle: req.body.bundle,
+              kit: req.body.kit,
+              tags: req.body.tags,
+            },
           },
-        },
-      },
-      { new: true, runValidators: true }
-    )
+        }, {
+          new: true,
+          runValidators: true
+        }
+      )
       .then((event) => {
         res
           .status(200)
-          .send({ success: true, message: "Ok add item event", data: event });
+          .send({
+            success: true,
+            message: "Ok add item event",
+            data: event
+          });
       })
       .catch((err) => {
         return res.status(400).send({
@@ -507,9 +632,9 @@ const EventControllers = {
 
   modifyItem(req, res) {
     console.log(req.body);
-    EventModel.findOneAndUpdate(
-      { "equipements._id": req.body._id },
-      {
+    EventModel.findOneAndUpdate({
+        "equipements._id": req.body._id
+      }, {
         $set: {
           "equipements.$": {
             name: req.body.name,
@@ -519,13 +644,18 @@ const EventControllers = {
             tags: req.body.tags,
           },
         },
-      },
-      { new: true, runValidators: true }
-    )
+      }, {
+        new: true,
+        runValidators: true
+      })
       .then((event) => {
         res
           .status(200)
-          .send({ success: true, message: "Ok add item event", data: event });
+          .send({
+            success: true,
+            message: "Ok add item event",
+            data: event
+          });
       })
       .catch((err) => {
         return res.status(400).send({
@@ -538,10 +668,17 @@ const EventControllers = {
 
   removeItem(req, res) {
     EventModel.findByIdAndUpdate(
-      req.body.project_id,
-      { $pull: { equipements: { _id: req.body.equipements_id } } },
-      { new: true, runValidators: true }
-    )
+        req.body.project_id, {
+          $pull: {
+            equipements: {
+              _id: req.body.equipements_id
+            }
+          }
+        }, {
+          new: true,
+          runValidators: true
+        }
+      )
       .then((event) => {
         res.status(200).send({
           success: true,

@@ -45,8 +45,17 @@ const venueSchema = mongoose.Schema(
       country: {
         type: String,
         default: '',
-      }
-
+      },
+      coordonates: {
+        latitude: {
+          type: Number,
+          default: '',
+        },
+        longitude: {
+          type: Number,
+          default: '',
+        }
+      },
      },
     // secondaryPics: {
     //   type: Object, 
