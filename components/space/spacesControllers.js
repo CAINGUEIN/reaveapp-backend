@@ -193,6 +193,40 @@ const SpaceControllers = {
         });
       });
   },
+
+  async addPrimaryPicSpace(imageName, spaceId, res) {
+    console.log('AAAAAAAAAAAAAA : ', imageName, spaceId)
+    VenueModel.findOneAndUpdate({
+        _id: spaceId
+      }, {
+        $set: {
+          primaryPic: imageName
+        },
+      }, {
+        new: true,
+        runValidators: true
+      }).then((updatedVenue) => {
+        if (updatedVenue) {
+          res.status(200).send({
+            success: true,
+            message: "Image added to primary pics",
+            data: updatedVenue
+          });
+        } else {
+          res.status(404).send({
+            success: false,
+            message: "Space not found"
+          });
+        }
+      })
+      .catch((err) => {
+        res.status(400).send({
+          success: false,
+          message: "Error adding image to primary pics",
+          error: err
+        });
+      });
+  },
   async addRoom(req, res) {
     //utilisé le middleware crée pour la verification des droit
     // target le space

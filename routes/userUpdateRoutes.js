@@ -24,6 +24,7 @@ const DataReturnLol = require("../components/data/dataReturnLol");
 const multer = require('multer');
 const { set } = require("..");
 const EventControllers = require("../components/event/event");
+const SpaceControllers = require("../components/space/spacesControllers");
 ///const storage = multer({ dest: 'uploads/' })
 const storage = multer.diskStorage( {
   destination: function(req, file, cb) {
@@ -105,6 +106,20 @@ userUpdateRouter.post(
     const venueId = req.body.venueId;
     try {
       EventControllers.addPrimaryPicVenue(imageName, venueId, res);
+    } catch (error) {
+    }
+  }
+);
+
+userUpdateRouter.post(
+  "/pic/space",
+  TokenHelpers.verifyTokenId,
+  uploads.single('selectedPic'),
+  async (req, res) => {
+    const imageName = req.file.filename;
+    const spaceId = req.body.spaceId;
+    try {
+      SpaceControllers.addPrimaryPicSpace(imageName, spaceId, res);
     } catch (error) {
     }
   }
