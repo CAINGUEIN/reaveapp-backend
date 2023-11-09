@@ -116,10 +116,11 @@ userUpdateRouter.post(
   TokenHelpers.verifyTokenId,
   uploads.single('selectedPic'),
   async (req, res) => {
+    console.log(req.file);
     const imageName = req.file.filename;
     const spaceId = req.body.spaceId;
     try {
-      SpaceControllers.addPrimaryPicSpace(imageName, spaceId, res);
+      SpaceControllers.addPrimaryPicSpace(spaceId, spaceId, res);
     } catch (error) {
     }
   }

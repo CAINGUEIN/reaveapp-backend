@@ -196,21 +196,22 @@ const SpaceControllers = {
 
   async addPrimaryPicSpace(imageName, spaceId, res) {
     console.log('AAAAAAAAAAAAAA : ', imageName, spaceId)
-    VenueModel.findOneAndUpdate({
+    SpaceModel.findOneAndUpdate({
         _id: spaceId
       }, {
         $set: {
-          primaryPic: imageName
+          picture: imageName
         },
       }, {
         new: true,
         runValidators: true
-      }).then((updatedVenue) => {
-        if (updatedVenue) {
+      }).then((updatedSpace) => {
+        if (updatedSpace) {
+          console.log("Import réussi!")
           res.status(200).send({
             success: true,
             message: "Image added to primary pics",
-            data: updatedVenue
+            data: updatedSpace
           });
         } else {
           res.status(404).send({
