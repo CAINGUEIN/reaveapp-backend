@@ -25,6 +25,7 @@ const multer = require('multer');
 const { set } = require("..");
 //const EventControllers = require("../components/event/event");
 const VenueControllers = require("../components/venue/venueControllers");
+const SpaceControllers = require("../components/space/spacesControllers");
 ///const storage = multer({ dest: 'uploads/' })
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -96,6 +97,21 @@ userUpdateRouter.post(
   //transforme l'image en toute les tailles
   MediaSave.imgResizeEvent
 )
+
+userUpdateRouter.post(
+  "/pic/space",
+  TokenHelpers.verifyTokenId,
+  uploads.single('selectedPic'),
+  async (req, res) => {
+    console.log(req.file);
+    const imageName = req.file.filename;
+    const spaceId = req.body.spaceId;
+    try {
+      SpaceControllers.addPrimaryPicSpace(spaceId, spaceId, res);
+    } catch (error) {
+    }
+  }
+);
 
 userUpdateRouter.post(
   "/img/item",

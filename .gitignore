@@ -2,5 +2,7 @@ node_modules
 TODO
 .env
 .env_lab
-
+uploads
 XXX
+package-lock.json
+yarn.lock
