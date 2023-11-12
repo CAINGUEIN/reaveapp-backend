@@ -15,29 +15,6 @@ eventRouter.post(
 );
 
 eventRouter.post(
-  "/createVenue",
-  TokenHelpers.verifyTokenId,
-  EventControllers.createVenue
-);
-
-eventRouter.post(
-  "/sendData",
-  TokenHelpers.verifyTokenId,
-  async (req, res) => {
-    const venueId = req.body.venueId;
-    const venueName = req.body.venueName
-    const street = req.body.street;
-    const city = req.body.city;
-    const pCode = req.body.pCode;
-    const country = req.body.country;
-    
-    EventControllers.addVenueAddressData(venueId, venueName, street, city, pCode, country, res);
-    
-    }
-  
-);
-
-eventRouter.post(
   "/list",
   TokenHelpers.verifyTokenId,
   EventControllers.listEvent
@@ -47,12 +24,6 @@ eventRouter.post(
   "/data",
   TokenHelpers.verifyTokenId,
   EventControllers.dataEvent
-);
-
-eventRouter.post(
-  "/dataVenue",
-  TokenHelpers.verifyTokenId,
-  EventControllers.dataVenue
 );
 
 eventRouter.post(
@@ -71,11 +42,7 @@ eventRouter.get(
   EventControllers.personalOperator
 );
 
-eventRouter.get(
-  "/personalOperatorVenue",
-  TokenHelpers.verifyTokenId,
-  EventControllers.personalOperatorVenue
-);
+
 
 eventRouter.post(
   "/update",

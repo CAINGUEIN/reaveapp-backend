@@ -1,8 +1,6 @@
 //module dotenv
 require("dotenv").config();
 
-console.log("coucou");
-
 //module express
 const express = require("express");
 const app = express();
@@ -14,6 +12,7 @@ const publicRouter = require("./routes/publicRoutes.js");
 const authRouter = require("./routes/authRoutes.js");
 const userRouter = require("./routes/userRoutes.js");
 const userUpdateRouter = require("./routes/userUpdateRoutes.js");
+const uploadImageRouter = require("./routes/uploadImageRoutes.js");
 const socialRouter = require("./routes/socialRoutes.js");
 const spaceRoutes = require("./routes/spaceRoutes.js");
 const calendarPersonalRoutes = require("./routes/calendarPersonalRoutes.js");
@@ -21,6 +20,7 @@ const searchRoutes = require("./routes/searchRoutes");
 const versionRouter = require("./routes/versionRoutes.js")
 const userDataRouter = require("./routes/userDataRoutes.js");
 const eventRouter = require("./routes/eventRoutes.js");
+const venueRouter = require("./routes/venueRoutes.js");
 const ticketRouter = require("./routes/ticketRoutes.js");
 
 //extension d'express
@@ -42,7 +42,9 @@ app.use('/uploads', express.static('uploads'));
 app.use("/auth", authRouter);
 app.use("/ticket", ticketRouter);
 app.use("/event", eventRouter);
+app.use("/venue", venueRouter);
 app.use("/user/update", userUpdateRouter);
+app.use("/uploadImage",uploadImageRouter);
 app.use("/user/data", userDataRouter);
 app.use("/user", userRouter);
 app.use("/social", socialRouter);

@@ -1,5 +1,0 @@
-Pictures are upload to the folder /uploads.
-Multer is used to upload venue pictures.
-Then url of the pic are stored to MongoDB.
-This system is a Local storage system. This is not a good system and is only used for the prototype.
-The solution is an Amazon S3 storage for exemple.

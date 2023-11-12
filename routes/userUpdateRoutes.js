@@ -23,18 +23,19 @@ const DataReturnLol = require("../components/data/dataReturnLol");
 
 const multer = require('multer');
 const { set } = require("..");
-const EventControllers = require("../components/event/event");
+//const EventControllers = require("../components/event/event");
+const VenueControllers = require("../components/venue/venueControllers");
 ///const storage = multer({ dest: 'uploads/' })
-const storage = multer.diskStorage( {
-  destination: function(req, file, cb) {
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
     cb(null, "uploads/");
   },
-  filename: function(req, file, cb) {
+  filename: function (req, file, cb) {
     const uniqueSuffix = Date.now()
     cb(null, uniqueSuffix + file.originalname);
   },
 })
-const uploads = multer({storage}) 
+const uploads = multer({ storage })
 
 
 userUpdateRouter.put(
@@ -95,20 +96,6 @@ userUpdateRouter.post(
   //transforme l'image en toute les tailles
   MediaSave.imgResizeEvent
 )
-
-userUpdateRouter.post(
-  "/pic/venue",
-  TokenHelpers.verifyTokenId,
-  uploads.single('selectedPic'),
-  async (req, res) => {
-    const imageName = req.file.filename;
-    const venueId = req.body.venueId;
-    try {
-      EventControllers.addPrimaryPicVenue(imageName, venueId, res);
-    } catch (error) {
-    }
-  }
-);
 
 userUpdateRouter.post(
   "/img/item",

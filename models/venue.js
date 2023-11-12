@@ -25,11 +25,11 @@ const venueSchema = mongoose.Schema(
         maxLength: 38,
       },
     },
-     primaryPic: {
-       type: String,
-       default: '',
-     },
-     address: {
+    primaryPic: {
+      type: String,
+      default: '',
+    },
+    address: {
       street: {
         type: String,
         default: '',
@@ -56,7 +56,7 @@ const venueSchema = mongoose.Schema(
           default: '',
         }
       },
-     },
+    },
     // secondaryPics: {
     //   type: Object, 
     //   default: {},
