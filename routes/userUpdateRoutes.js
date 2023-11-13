@@ -107,7 +107,7 @@ userUpdateRouter.post(
     const imageName = req.file.filename;
     const spaceId = req.body.spaceId;
     try {
-      SpaceControllers.addPrimaryPicSpace(spaceId, spaceId, res);
+      SpaceControllers.addPrimaryPicSpace(imageName, spaceId, res);
     } catch (error) {
     }
   }
