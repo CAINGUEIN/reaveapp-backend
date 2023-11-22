@@ -5,6 +5,8 @@ const VenueModel = require("../models/venue");
 
 const TokenHelpers = require("../components/core/tokenHelpers");
 const VenueControllers = require("../components/venue/venueControllers");
+const EventControllers = require("../components/event/event");
+
 
 // -Boatti- comment :
 // Multer is used to upload pictures.
@@ -14,6 +16,7 @@ const VenueControllers = require("../components/venue/venueControllers");
 // The solution is an Amazon S3 storage for exemple.
 
 const multer = require('multer');
+const { eventNames } = require("..");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -28,17 +31,33 @@ const storage = multer.diskStorage({
 const uploads = multer({ storage });
 
 uploadImageRouter.post(
+  "/event/posterPic",
+  TokenHelpers.verifyTokenId,
+  uploads.single('selectedPic'),
+  async (req, res) => {
+    const imageName = req.file.filename;
+    const routeId = req.body.routeId;
+    try {
+      EventControllers.addPosterPicEvent(imageName, routeId, res);
+    } catch (error) {
+    }
+  }
+);
+
+uploadImageRouter.post(
   "/venue/primaryPic",
   TokenHelpers.verifyTokenId,
   uploads.single('selectedPic'),
   async (req, res) => {
     const imageName = req.file.filename;
-    const venueId = req.body.venueId;
+    const routeId = req.body.routeId;
     try {
-      VenueControllers.addPrimaryPicVenue(imageName, venueId, res);
+      VenueControllers.addPrimaryPicVenue(imageName, routeId, res);
     } catch (error) {
     }
   }
 );
+
+
 
 module.exports = uploadImageRouter;

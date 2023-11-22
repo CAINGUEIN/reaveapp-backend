@@ -24,7 +24,7 @@ venueRouter.post(
     TokenHelpers.verifyTokenId,
     async (req, res) => {
         const venueId = req.body.venueId;
-        const venueName = req.body.venueName
+        const venueName = req.body.venueName;
         const street = req.body.street;
         const city = req.body.city;
         const pCode = req.body.pCode;
@@ -33,10 +33,10 @@ venueRouter.post(
     }
 );
 
-venueRouter.get(
+venueRouter.post(
     "/personalOperatorVenue",
     TokenHelpers.verifyTokenId,
-    VenueControllers.personalOperatorVenue
+    VenueControllers.personalOperatorVenue,
 );
 
 venueRouter.post(

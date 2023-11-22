@@ -96,21 +96,54 @@ const EventControllers = {
       });
   },
 
-  
+  async addPosterPicEvent(imageName, routeId, res) {
+    EventModel.findOneAndUpdate({
+      _id: routeId
+    }, {
+      $set: {
+        posterPic: imageName
+      },
+    }, {
+      new: true,
+      runValidators: true
+    }).then((updatedVenue) => {
+      if (updatedVenue) {
+        res.status(200).send({
+          success: true,
+          message: "Success | Image added to poster pic",
+          data: updatedVenue
+        });
+      } else {
+        res.status(404).send({
+          success: false,
+          message: "Error | Event not found"
+        });
+      }
+    })
+      .catch((err) => {
+        res.status(400).send({
+          success: false,
+          message: "Error | Adding image to poster pic",
+          error: err
+        });
+      });
+  },
+
+
 
   async recupTicket(req, res, next) {
     EventModel.findByIdAndUpdate(
-        req.body.event_id, {
-          $inc:
-          //list des chose a changer pour cette route
-          {
-            ticket: -1
-          },
-        }, {
-          new: true,
-          runValidators: true
-        }
-      )
+      req.body.event_id, {
+      $inc:
+      //list des chose a changer pour cette route
+      {
+        ticket: -1
+      },
+    }, {
+      new: true,
+      runValidators: true
+    }
+    )
       .then((dataEvent) => {
         req.dataEvent = dataEvent;
         next();
@@ -126,10 +159,10 @@ const EventControllers = {
 
   soldTicket(req, res, next) {
     EventModel.findByIdAndUpdate(req.body.event_id, {
-        $addToSet: {
-          soldTicket: req.ticket._id,
-        },
-      })
+      $addToSet: {
+        soldTicket: req.ticket._id,
+      },
+    })
       .then(next())
       .catch((err) => {
         return res.status(400).send({
@@ -142,18 +175,27 @@ const EventControllers = {
 
   personalOperator(req, res, next) {
     EventModel.find({
-        $or: [{
+      $or: [{
+        $and: [
+          {
             "owner.user_id": req.decodedToken._id
           },
           {
-            staff: {
-              $elemMatch: {
-                staff_id: req.decodedToken._id
-              }
-            }
+
+            "spaceAssociated": req.body.sendSpaceAssociated
+
           },
-        ],
-      })
+        ]
+      },
+      {
+        staff: {
+          $elemMatch: {
+            staff_id: req.decodedToken._id
+          }
+        }
+      },
+      ],
+    })
       .populate("owner.user_id staff.staff_id", "userTag profileName owner")
       .exec((err, result) => {
         if (err)
@@ -169,32 +211,32 @@ const EventControllers = {
       });
   },
 
-  
+
   update(req, res) {
     let update = req.body;
     EventModel.findByIdAndUpdate(
-        update.event_id, {
-          //list des chose a changer pour cette route
-          name: update.name,
-          orga: update.orga,
-          venueName: update.venueName,
-          adress: update.adress,
-          city: update.city,
-          cp: update.cp,
-          country: update.country,
-          game: update.game,
-          platform: update.platform,
-          price: update.price,
-          type: update.type,
-          openDate: update.openDate,
-          date: update.date,
-          description: update.description,
-          isPublished: update.isPublished,
-        }, {
-          new: true,
-          runValidators: true
-        }
-      )
+      update.event_id, {
+      //list des chose a changer pour cette route
+      name: update.name,
+      orga: update.orga,
+      venueName: update.venueName,
+      adress: update.adress,
+      city: update.city,
+      cp: update.cp,
+      country: update.country,
+      game: update.game,
+      platform: update.platform,
+      price: update.price,
+      type: update.type,
+      openDate: update.openDate,
+      date: update.date,
+      description: update.description,
+      isPublished: update.isPublished,
+    }, {
+      new: true,
+      runValidators: true
+    }
+    )
       .then((event) => {
         res
           .status(200)
@@ -215,20 +257,20 @@ const EventControllers = {
 
   addStaff(req, res) {
     EventModel.findByIdAndUpdate(
-        req.body.project_id, {
-          $addToSet: {
-            staff: {
-              staff_id: req.body.staff_id,
-              role: req.body.role,
-              permission: req.body.permission,
-              team: req.body.team,
-            },
-          },
-        }, {
-          new: true,
-          runValidators: true
-        }
-      )
+      req.body.project_id, {
+      $addToSet: {
+        staff: {
+          staff_id: req.body.staff_id,
+          role: req.body.role,
+          permission: req.body.permission,
+          team: req.body.team,
+        },
+      },
+    }, {
+      new: true,
+      runValidators: true
+    }
+    )
       .then((event) => {
         res
           .status(200)
@@ -249,19 +291,19 @@ const EventControllers = {
 
   addStaffAndSwitchOwner(req, res) {
     EventModel.findByIdAndUpdate(
-        req.body.project_id, {
-          $addToSet: {
-            staff: {
-              staff_id: req.decodedToken._id,
-              permission: "Admin",
-            },
-          },
-          "owner.user_id": req.body.staff_id,
-        }, {
-          new: true,
-          runValidators: true
-        }
-      )
+      req.body.project_id, {
+      $addToSet: {
+        staff: {
+          staff_id: req.decodedToken._id,
+          permission: "Admin",
+        },
+      },
+      "owner.user_id": req.body.staff_id,
+    }, {
+      new: true,
+      runValidators: true
+    }
+    )
       .then((event) => {
         res
           .status(200)
@@ -283,20 +325,20 @@ const EventControllers = {
   modifyStaff(req, res) {
     console.log(req.body);
     EventModel.findOneAndUpdate({
-        "staff._id": req.body._id
-      }, {
-        $set: {
-          "staff.$": {
-            staff_id: req.body.staff_id,
-            role: req.body.role,
-            permission: req.body.permission,
-            team: req.body.team,
-          },
+      "staff._id": req.body._id
+    }, {
+      $set: {
+        "staff.$": {
+          staff_id: req.body.staff_id,
+          role: req.body.role,
+          permission: req.body.permission,
+          team: req.body.team,
         },
-      }, {
-        new: true,
-        runValidators: true
-      })
+      },
+    }, {
+      new: true,
+      runValidators: true
+    })
       .then((event) => {
         res
           .status(200)
@@ -317,14 +359,14 @@ const EventControllers = {
 
   modifyStaffAndSwitchOwner(req, res) {
     EventModel.findByIdAndUpdate(
-        req.body.project_id, {
-          "owner.role": req.body.role,
-          "owner.team": req.body.team,
-        }, {
-          new: true,
-          runValidators: true
-        }
-      )
+      req.body.project_id, {
+      "owner.role": req.body.role,
+      "owner.team": req.body.team,
+    }, {
+      new: true,
+      runValidators: true
+    }
+    )
       .then((event) => {
         res
           .status(200)
@@ -345,17 +387,17 @@ const EventControllers = {
 
   removeStaff(req, res) {
     EventModel.findByIdAndUpdate(
-        req.body.project_id, {
-          $pull: {
-            staff: {
-              _id: req.body.staff_id
-            }
-          }
-        }, {
-          new: true,
-          runValidators: true
+      req.body.project_id, {
+      $pull: {
+        staff: {
+          _id: req.body.staff_id
         }
-      )
+      }
+    }, {
+      new: true,
+      runValidators: true
+    }
+    )
       .then((event) => {
         res.status(200).send({
           success: true,
@@ -410,21 +452,21 @@ const EventControllers = {
   },
   addItem(req, res) {
     EventModel.findByIdAndUpdate(
-        req.body.project_id, {
-          $addToSet: {
-            equipements: {
-              name: req.body.name,
-              quantity: req.body.quantity,
-              bundle: req.body.bundle,
-              kit: req.body.kit,
-              tags: req.body.tags,
-            },
-          },
-        }, {
-          new: true,
-          runValidators: true
-        }
-      )
+      req.body.project_id, {
+      $addToSet: {
+        equipements: {
+          name: req.body.name,
+          quantity: req.body.quantity,
+          bundle: req.body.bundle,
+          kit: req.body.kit,
+          tags: req.body.tags,
+        },
+      },
+    }, {
+      new: true,
+      runValidators: true
+    }
+    )
       .then((event) => {
         res
           .status(200)
@@ -446,21 +488,21 @@ const EventControllers = {
   modifyItem(req, res) {
     console.log(req.body);
     EventModel.findOneAndUpdate({
-        "equipements._id": req.body._id
-      }, {
-        $set: {
-          "equipements.$": {
-            name: req.body.name,
-            quantity: req.body.quantity,
-            bundle: req.body.bundle,
-            kit: req.body.kit,
-            tags: req.body.tags,
-          },
+      "equipements._id": req.body._id
+    }, {
+      $set: {
+        "equipements.$": {
+          name: req.body.name,
+          quantity: req.body.quantity,
+          bundle: req.body.bundle,
+          kit: req.body.kit,
+          tags: req.body.tags,
         },
-      }, {
-        new: true,
-        runValidators: true
-      })
+      },
+    }, {
+      new: true,
+      runValidators: true
+    })
       .then((event) => {
         res
           .status(200)
@@ -481,17 +523,17 @@ const EventControllers = {
 
   removeItem(req, res) {
     EventModel.findByIdAndUpdate(
-        req.body.project_id, {
-          $pull: {
-            equipements: {
-              _id: req.body.equipements_id
-            }
-          }
-        }, {
-          new: true,
-          runValidators: true
+      req.body.project_id, {
+      $pull: {
+        equipements: {
+          _id: req.body.equipements_id
         }
-      )
+      }
+    }, {
+      new: true,
+      runValidators: true
+    }
+    )
       .then((event) => {
         res.status(200).send({
           success: true,

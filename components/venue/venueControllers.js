@@ -46,9 +46,9 @@ const VenueControllers = {
             });
     },
 
-    async addPrimaryPicVenue(imageName, venueId, res) {
+    async addPrimaryPicVenue(imageName, routeId, res) {
         VenueModel.findOneAndUpdate({
-            _id: venueId
+            _id: routeId
         }, {
             $set: {
                 primaryPic: imageName
@@ -79,7 +79,7 @@ const VenueControllers = {
             });
     },
 
-    async publishVenue(req,res) {
+    async publishVenue(req, res) {
         VenueModel.findOneAndUpdate({
             _id: req.body._id
         }, {
@@ -90,7 +90,7 @@ const VenueControllers = {
             new: true,
             runValidators: true
         }).then((published) => {
-           console.log(published);
+            console.log(published);
         })
             .catch((err) => {
                 res.status(400).send({
@@ -185,16 +185,13 @@ const VenueControllers = {
 
     personalOperatorVenue(req, res, next) {
         VenueModel.find({
-            $or: [{
-                "owner.user_id": req.decodedToken._id
-            },
-            {
-                staff: {
-                    $elemMatch: {
-                        staff_id: req.decodedToken._id
-                    }
-                }
-            },
+            $and: [
+                {
+                    "owner.user_id": req.decodedToken._id
+                },
+                {
+                    "spaceAssociated": req.body.sendSpaceAssociated
+                },
             ],
         })
             .populate("owner.user_id staff.staff_id", "userTag profileName owner")
@@ -214,28 +211,28 @@ const VenueControllers = {
 
     async findPublishedVenue(req, res, next) {
         try {
-          VenueModel.find({ isPublished: true })
-            .exec((err, publishedVenuesData) => {
-                if (err)
-                return res.status(400).send({
-                    success: false,
-                    message: "Error | Retrieving published venues",
+            VenueModel.find({ isPublished: true })
+                .exec((err, publishedVenuesData) => {
+                    if (err)
+                        return res.status(400).send({
+                            success: false,
+                            message: "Error | Retrieving published venues",
+                        });
+                    return res.status(200).send({
+                        success: true,
+                        message: "Success | Retrieving published venues",
+                        data: publishedVenuesData,
+                    });
                 });
-                return res.status(200).send({
-                    success: true,
-                    message: "Success | Retrieving published venues",
-                    data: publishedVenuesData,
-            });
-            });
         } catch (error) {
-          console.error('Error', error);
-          return res.status(400).send({
-            success: false,
-            message: "Error | Using venue model",
-        });
-        
+            console.error('Error', error);
+            return res.status(400).send({
+                success: false,
+                message: "Error | Using venue model",
+            });
+
         }
-      }
+    }
 }
 
 module.exports = VenueControllers;

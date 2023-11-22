@@ -9,6 +9,10 @@ const venueSchema = mongoose.Schema(
       minLength: 3,
       maxLength: 38,
     },
+    spaceAssociated : {
+      type: mongoose.ObjectId,
+      ref:"space"
+    },
     owner: {
       user_id: {
         type: mongoose.ObjectId,
@@ -39,7 +43,7 @@ const venueSchema = mongoose.Schema(
         default: '',
       },
       pcode: {
-        type: Number,
+        type: String,
         default: null,
       },
       country: {

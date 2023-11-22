@@ -9,6 +9,14 @@ const eventSchema = mongoose.Schema(
       minLength: 3,
       maxLength: 38,
     },
+    posterPic : {
+      type: String,
+      default : "",
+    },
+    spaceAssociated : {
+      type: mongoose.ObjectId,
+      ref:"space"
+    },
     owner: {
       user_id: {
         type: mongoose.ObjectId,
