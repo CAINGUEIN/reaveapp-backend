@@ -26,6 +26,47 @@ const EventControllers = {
   },
 
   async listEvent(req, res) {
+    req.optionQuery = {
+      isPublished: true,
+    };
+    // recup des 20 prochain
+    let perpage = "";
+    let page = "";
+    if (req.body.perpage === undefined) {
+      perpage = 20;
+    } else {
+      perpage = req.body.perpage;
+    }
+    if (req.body.page === undefined) {
+      page = 0;
+    } else {
+      page = req.body.page;
+    }
+    EventModel.find(req.optionQuery)
+      .sort({
+        date: 1
+      })
+      .limit(perpage)
+      .skip(page * perpage)
+      .populate("owner.user_id staff.staff_id", "userTag profileName owner")
+      .exec((err, result) => {
+        if (err) {
+          return res.status(400).send({
+            success: false,
+            message: "Erreur data event",
+            errors: err,
+          });
+        }
+        console.log("RESULTAT: "+result)
+        return res.status(200).send({
+          success: true,
+          message: "Ok twenty event",
+          data: result,
+        });
+      })
+  },
+
+  async listCurrentEvent(req, res) {
     let timestamp = Date.now();
     req.optionQuery = {
       date: {
@@ -64,6 +105,7 @@ const EventControllers = {
             errors: err,
           });
         }
+        console.log("RESULTAT: "+result)
         return res.status(200).send({
           success: true,
           message: "Ok twenty event",
@@ -220,7 +262,7 @@ const EventControllers = {
       name: update.name,
       orga: update.orga,
       venueName: update.venueName,
-      adress: update.adress,
+      adress: update.adress,  
       city: update.city,
       cp: update.cp,
       country: update.country,

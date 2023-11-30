@@ -15,10 +15,17 @@ eventRouter.post(
 );
 
 eventRouter.post(
+  "/listCurrent",
+  TokenHelpers.verifyTokenId,
+  EventControllers.listCurrentEvent
+);
+
+eventRouter.post(
   "/list",
   TokenHelpers.verifyTokenId,
   EventControllers.listEvent
-);
+
+)
 
 eventRouter.post(
   "/data",
