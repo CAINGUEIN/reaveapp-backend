@@ -8,7 +8,12 @@ const SpaceControllers = require("../components/space/spacesControllers");
 // l'image une fois stocker doit rendre un url pour le mettre dans la db
 
 spaceRouter.post(
+  "/allSpaces",
+  SpaceControllers.checkSpace
+);
+spaceRouter.post(
   "/checkSpace",
+  TokenHelpers.verifyTokenId,
   SpaceControllers.infoAllSpaceForUser
 );
 spaceRouter.post(

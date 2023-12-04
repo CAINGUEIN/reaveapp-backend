@@ -160,7 +160,7 @@ const SpaceControllers = {
       });
   },
   async checkSpace(req, res) {
-    SpaceModel.findById(req.body._id)
+    SpaceModel.find()
       .then((space) => {
         return res.status(200).send({
           success: true,
