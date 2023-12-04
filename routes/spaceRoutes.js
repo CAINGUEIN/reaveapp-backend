@@ -9,7 +9,6 @@ const SpaceControllers = require("../components/space/spacesControllers");
 
 spaceRouter.post(
   "/checkSpace",
-  TokenHelpers.verifyTokenId,
   SpaceControllers.infoAllSpaceForUser
 );
 spaceRouter.post(

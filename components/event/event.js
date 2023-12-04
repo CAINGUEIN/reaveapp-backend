@@ -57,10 +57,9 @@ const EventControllers = {
             errors: err,
           });
         }
-        console.log("RESULTAT: "+result)
         return res.status(200).send({
           success: true,
-          message: "Ok twenty event",
+          message: "Ok twenty event deprecated",
           data: result,
         });
       })
