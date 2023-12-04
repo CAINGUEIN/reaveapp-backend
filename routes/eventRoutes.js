@@ -27,7 +27,6 @@ eventRouter.post(
 
 eventRouter.post(
   "/data",
-  TokenHelpers.verifyTokenId,
   EventControllers.dataEvent
 );
 
