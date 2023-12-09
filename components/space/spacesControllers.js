@@ -134,6 +134,23 @@ const SpaceControllers = {
     //recup tout les users dans le data of space
     //effacé dans la liste des users recup le space
     //puis effacer le space
+    SpaceModel.deleteOne({
+      _id: req.body.id
+    })
+    .then((space) => {
+      return res.status(200).send({
+        success: true,
+        message: `Le space a bien été supprimé`,
+        data: space,
+      });
+    })
+    .catch((err) => {
+      return res.status(400).send({
+        success: false,
+        message: "Erreur suppression du space",
+        data: err,
+      });
+    });
   },
   async infoAllSpaceForUser(req, res) {
     SpaceModel.find({
@@ -147,7 +164,7 @@ const SpaceControllers = {
             message: "Erreur data space",
           });
         if (space === null) {
-          return res.status(400).send({
+          return res.status(404).send({
             success: false,
             message: "Erreur space delete",
           });

@@ -33,6 +33,13 @@ spaceRouter.put(
   TokenHelpers.verifyTokenId,
   SpaceControllers.addRoom
 );
+
+spaceRouter.post(
+  "/delete",
+  TokenHelpers.verifyTokenId,
+  SpaceControllers.deleteSpace
+);
+
 spaceRouter.post(
   "/deleteRoom",
   TokenHelpers.verifyTokenId,
