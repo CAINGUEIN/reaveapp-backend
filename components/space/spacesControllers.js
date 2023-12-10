@@ -1,6 +1,6 @@
 const SpaceModel = require("../../models/space");
 const UserModel = require("../../models/user");
-
+const EventModel = require("../../models/event")
 //TODO: si trop de bug voir a faire des transaction
 
 const SpaceControllers = {
@@ -134,23 +134,70 @@ const SpaceControllers = {
     //recup tout les users dans le data of space
     //effacé dans la liste des users recup le space
     //puis effacer le space
-    SpaceModel.deleteOne({
-      _id: req.body.id
-    })
+    SpaceModel.findById(req.body.id)
     .then((space) => {
-      return res.status(200).send({
-        success: true,
-        message: `Le space a bien été supprimé`,
-        data: space,
-      });
+        if(space===""){
+          return res.status(404).send({
+            success: false,
+            message: "Le space n'existe pas",
+          });
+        }
+        let name = space.nameSpace;
+        SpaceModel.deleteOne({
+          _id: req.body.id
+        })
+        .then(() => {
+          
+          UserModel.updateMany(
+            { spaces: req.body.id },
+            { $pull: { spaces: req.body.id } },
+          )
+            .then(() => {
+              EventModel.deleteMany({ spaceAssociated: req.body.id })
+              .then(() => {
+                
+                return res.status(200).send({
+                  success: true,
+                  message: `Le space ${name} a bien été supprimé`,
+                  data: space,
+                });
+              })
+              .catch((err) => {
+                console.log(err)
+                return res.status(400).send({
+                  success: false,
+                  message: "Erreur suppression des events liés au space",
+                  data: err,
+                });
+              })
+            })
+            .catch((err) => {
+              SpaceModel.findByIdAndDelete(resultSpace._id);
+              //si non rien on sort
+              return res.status(400).send({
+                success: false,
+                message: "Erreur suppression des users liés au space",
+                data: err,
+              });
+            });
+
+        })
+        .catch((err) => {
+          return res.status(400).send({
+            success: false,
+            message: "Erreur suppression du space",
+            data: err,
+          });
+        });      
     })
     .catch((err) => {
-      return res.status(400).send({
-        success: false,
-        message: "Erreur suppression du space",
-        data: err,
-      });
-    });
+        return res.status(400).send({
+          success: false,
+          message: "Erreur recherche du space",
+          data: err,
+        });
+    })
+
   },
   async infoAllSpaceForUser(req, res) {
     SpaceModel.find({
