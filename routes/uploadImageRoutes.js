@@ -45,6 +45,20 @@ uploadImageRouter.post(
 );
 
 uploadImageRouter.post(
+  "/event/secondaryPics",
+  TokenHelpers.verifyTokenId,
+  uploads.single('selectedPic'),
+  async (req, res) => {
+    const imageName = req.file.filename;
+    const routeId = req.body.routeId;
+    try {
+      EventControllers.addSecondaryPicEvent(imageName, routeId, res);
+    } catch (error) {
+    }
+  }
+);
+
+uploadImageRouter.post(
   "/venue/primaryPic",
   TokenHelpers.verifyTokenId,
   uploads.single('selectedPic'),

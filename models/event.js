@@ -13,6 +13,9 @@ const eventSchema = mongoose.Schema(
       type: String,
       default : "",
     },
+    secondaryPics : [
+      { type: String }
+    ],
     spaceAssociated : {
       type: mongoose.ObjectId,
       ref:"space"

@@ -170,7 +170,51 @@ const EventControllers = {
       });
   },
 
-
+  async addSecondaryPicEvent(imageName, routeId, res) {
+    EventModel.findOne({ _id: routeId })
+      .then((event) => {
+        if (event.secondaryPics.includes(imageName)) {
+          res.status(400).send({
+            success: false,
+            message: "Error | Image already exists in secondary images. Please rename the file and try again.",
+          });
+        } else {
+          EventModel.findOneAndUpdate(
+            { _id: routeId },
+            { $push: { secondaryPics: imageName } },
+            { new: true, runValidators: true }
+          )
+            .then((updatedVenue) => {
+              if (updatedVenue) {
+                res.status(200).send({
+                  success: true,
+                  message: "Success | Image added to secondary images",
+                  data: updatedVenue,
+                });
+              } else {
+                res.status(404).send({
+                  success: false,
+                  message: "Error | Event not found",
+                });
+              }
+            })
+            .catch((err) => {
+              res.status(400).send({
+                success: false,
+                message: "Error | Adding image to secondary images",
+                error: err,
+              });
+            });
+        }
+      })
+      .catch((err) => {
+        res.status(400).send({
+          success: false,
+          message: "Error | Finding event",
+          error: err,
+        });
+      });
+  },
 
   async recupTicket(req, res, next) {
     EventModel.findByIdAndUpdate(
