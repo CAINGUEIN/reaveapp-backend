@@ -13,6 +13,10 @@ const eventSchema = mongoose.Schema(
       type: String,
       default : "",
     },
+    descriptionPic : {
+      type: String,
+      default : "",
+    },
     secondaryPics : [
       { type: String }
     ],

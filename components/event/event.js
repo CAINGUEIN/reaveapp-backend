@@ -216,6 +216,39 @@ const EventControllers = {
       });
   },
 
+  async addDescPicEvent(imageName, routeId, res) {
+    EventModel.findOneAndUpdate({
+      _id: routeId
+    }, {
+      $set: {
+        descriptionPic: imageName
+      },
+    }, {
+      new: true,
+      runValidators: true
+    }).then((updatedVenue) => {
+      if (updatedVenue) {
+        res.status(200).send({
+          success: true,
+          message: "Success | Image added to desc pic",
+          data: updatedVenue
+        });
+      } else {
+        res.status(404).send({
+          success: false,
+          message: "Error | Event not found"
+        });
+      }
+    })
+      .catch((err) => {
+        res.status(400).send({
+          success: false,
+          message: "Error | Adding image to desc pic",
+          error: err
+        });
+      });
+  },
+
   async recupTicket(req, res, next) {
     EventModel.findByIdAndUpdate(
       req.body.event_id, {
