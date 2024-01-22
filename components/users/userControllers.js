@@ -206,7 +206,7 @@ const userControllers = {
               value: 0,
               message:
                 "ticket" +
-                dataTicket.ticket.cathegory +
+                dataTicket.ticket.category +
                 "pour " +
                 req.body.eventName,
             },
@@ -226,7 +226,7 @@ const userControllers = {
               value: -dataTicket.ticket.price,
               message:
                 "achat d'un ticket" +
-                dataTicket.ticket.cathegory +
+                dataTicket.ticket.category +
                 "pour " +
                 req.body.eventName,
             },

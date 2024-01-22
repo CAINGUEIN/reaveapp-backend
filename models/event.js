@@ -90,7 +90,7 @@ const eventSchema = mongoose.Schema(
           type: Number,
           min: [0, "cannot be negative"],
         },
-        cathegory: {
+        category: {
           type: String,
           minLength: 3,
           maxLength: 38,

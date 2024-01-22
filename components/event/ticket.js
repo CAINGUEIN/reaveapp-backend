@@ -65,7 +65,7 @@ const TicketControllers = {
         $addToSet: {
           tickets: {
             quantities: req.body.quantities,
-            cathegory: req.body.cathegory,
+            category: req.body.category,
             price: req.body.price,
             color: req.body.color,
             type: req.body.type,
