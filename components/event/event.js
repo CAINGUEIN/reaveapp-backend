@@ -152,7 +152,8 @@ const EventControllers = {
         res.status(200).send({
           success: true,
           message: "Success | Image added to poster pic",
-          data: updatedVenue
+          data: updatedVenue,
+          name: imageName
         });
       } else {
         res.status(404).send({
@@ -190,6 +191,7 @@ const EventControllers = {
                   success: true,
                   message: "Success | Image added to secondary images",
                   data: updatedVenue,
+                  name: imageName,
                 });
               } else {
                 res.status(404).send({
@@ -231,7 +233,8 @@ const EventControllers = {
         res.status(200).send({
           success: true,
           message: "Success | Image added to desc pic",
-          data: updatedVenue
+          data: updatedVenue,
+          name: imageName
         });
       } else {
         res.status(404).send({

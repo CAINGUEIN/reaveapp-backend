@@ -223,6 +223,24 @@ const SpaceControllers = {
         });
       });
   },
+
+  async getSingleSpace(req,res){
+    SpaceModel.findById(req.body.id)
+      .then((space) => {
+        return res.status(200).send({
+          success: true,
+          message: "Ok data single space",
+          data: space,
+        });
+      })
+      .catch((err) => {
+        return res.status(400).send({
+          success: false,
+          message: "Erreur data space",
+          data: err,
+        });
+      });
+  },
   async checkSpace(req, res) {
     SpaceModel.find()
       .then((space) => {

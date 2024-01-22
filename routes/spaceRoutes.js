@@ -13,8 +13,14 @@ spaceRouter.post(
 );
 spaceRouter.post(
   "/checkSpace",
-  TokenHelpers.verifyTokenId,
+  TokenHelpers.verifyTokenId,    
   SpaceControllers.infoAllSpaceForUser
+);
+
+spaceRouter.post(
+  "/spaceById",
+  TokenHelpers.verifyTokenId,
+  SpaceControllers.getSingleSpace
 );
 spaceRouter.post(
   "/allRooms",
