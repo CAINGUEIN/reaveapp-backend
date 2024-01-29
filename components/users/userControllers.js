@@ -225,9 +225,9 @@ const userControllers = {
               type: "BuyTicket",
               value: -dataTicket.ticket.price,
               message:
-                "achat d'un ticket" +
+                "achat d'un ticket " +
                 dataTicket.ticket.category +
-                "pour " +
+                " pour " +
                 req.body.eventName,
             },
           },
